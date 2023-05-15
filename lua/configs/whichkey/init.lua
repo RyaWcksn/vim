@@ -132,6 +132,10 @@ wk.register({
 		name = "+Git",
 		g = { ":Neogit<CR>", "Neogit" },
 	},
+	o = {
+		name = "+Open",
+		e = { ":NvimTreeToggle<CR>", "NvimTree" },
+	},
 	l = {
 		name = "+LSP",
 		f = { ":lua vim.lsp.buf.format()<CR>", "Code Format" },
@@ -141,6 +145,7 @@ wk.register({
 		i = { ":lua vim.lsp.buf.implementation()<CR>", "Code Implementation" },
 		w = { ":lua vim.lsp.buf.references()<CR>", "Code References" },
 		l = { ":lua vim.lsp.codelens.run()<CR>", "Code Lens" },
+		L = { ":lua vim.lsp.codelens.refresh()<CR>", "Code Lens" },
 		r = { ":lua vim.lsp.buf.rename()<CR>", "Rename" },
 		t = { ":Telescope diagnostics<CR>", "Error Diagnostics" },
 	},
