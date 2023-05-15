@@ -128,6 +128,10 @@ wk.register({
 		w = { ":w<CR>", "Save" },
 		s = { ":SudaWrite<CR>", "Sudo save" },
 	},
+	g = {
+		name = "+Git",
+		g = { ":Neogit<CR>", "Neogit" },
+	},
 	l = {
 		name = "+LSP",
 		f = { ":lua vim.lsp.buf.format()<CR>", "Code Format" },
