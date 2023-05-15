@@ -35,14 +35,12 @@ return require('packer').startup(function(use)
 	use {
 		"folke/which-key.nvim",
 		config = function()
-			vim.o.timeout = true
-			vim.o.timeoutlen = 300
 			require('configs.whichkey')
 		end
 	}
 	-- Lazy loading:
 	-- Load on specific commands
-	use {'tpope/vim-dispatch', opt = true, cmd = {'Dispatch', 'Make', 'Focus', 'Start'}}
+	use { 'tpope/vim-dispatch', opt = true, cmd = { 'Dispatch', 'Make', 'Focus', 'Start' } }
 
 	-- Post-install/update hook with neovim command
 	use {
@@ -54,7 +52,7 @@ return require('packer').startup(function(use)
 	use { 'nvim-treesitter/playground' }
 
 	-- You can alias plugin names
-	use {'dracula/vim', as = 'dracula'}
+	use { 'dracula/vim', as = 'dracula' }
 	use {
 		'nvim-tree/nvim-tree.lua',
 		requires = 'nvim-tree/nvim-web-devicons',
@@ -62,12 +60,19 @@ return require('packer').startup(function(use)
 			require('configs/nvim-tree')
 		end
 	}
+	use {
+		'nvim-lualine/lualine.nvim',
+		requires = { 'nvim-tree/nvim-web-devicons', opt = true },
+		config = function()
+			require('configs.lualine')
+		end
+	}
 	-- Telescope
 	use { 'nvim-lua/plenary.nvim' }
 	use {
 		'nvim-telescope/telescope.nvim',
 		config = function()
-			require('configs/telescope')
+			require('configs.telescope')
 		end
 	}
 	use { 'nvim-telescope/telescope-media-files.nvim' }
@@ -89,5 +94,13 @@ return require('packer').startup(function(use)
 	}
 	use {
 		'L3MON4D3/LuaSnip'
+	}
+
+	use {
+		'TimUntersberger/neogit',
+		requires = 'nvim-lua/plenary.nvim',
+		config = function ()
+			require('configs.neogit')
+		end
 	}
 end)

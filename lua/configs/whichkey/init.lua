@@ -1,6 +1,6 @@
 local wk = require("which-key")
 
-require("which-key").setup {
+wk.setup {
 	{
 		plugins = {
 			marks = true, -- shows a list of your marks on ' and `
@@ -91,7 +91,7 @@ require("which-key").setup {
 	}
 }
 
-wk.register({ prefix = "<leader>", mode = "n", noremap = true }, {
+wk.register({
 	w = {
 		name = "+Window",
 		k = { "<c-w>k", "Switch Up" },
@@ -140,4 +140,4 @@ wk.register({ prefix = "<leader>", mode = "n", noremap = true }, {
 		r = { ":lua vim.lsp.buf.rename()<CR>", "Rename" },
 		t = { ":Telescope diagnostics<CR>", "Error Diagnostics" },
 	},
-})
+},  {prefix = "<leader>", mode = "n", noremap = true })
