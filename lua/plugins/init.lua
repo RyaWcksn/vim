@@ -137,6 +137,7 @@ return require('packer').startup(function(use)
 			require("configs.mason-dap")
 		end
 	}
+	use {'leoluz/nvim-dap-go'}
 
 	use {
 		"olexsmir/gopher.nvim",
