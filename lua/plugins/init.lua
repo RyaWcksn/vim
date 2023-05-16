@@ -93,14 +93,26 @@ return require('packer').startup(function(use)
 		'saadparwaiz1/cmp_luasnip'
 	}
 	use {
-		'L3MON4D3/LuaSnip'
+		'L3MON4D3/LuaSnip',
+		dependencies = { "rafamadriz/friendly-snippets" },
+		config = function()
+			require('configs.snippet')
+		end
 	}
 
 	use {
 		'TimUntersberger/neogit',
 		requires = 'nvim-lua/plenary.nvim',
-		config = function ()
+		config = function()
 			require('configs.neogit')
+		end
+	}
+	use {
+		'akinsho/bufferline.nvim',
+		tag = "*",
+		requires = 'nvim-tree/nvim-web-devicons',
+		config = function()
+			require('configs.bufferline')
 		end
 	}
 end)

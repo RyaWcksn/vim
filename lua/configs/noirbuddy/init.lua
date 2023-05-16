@@ -1,3 +1,3 @@
 require("noirbuddy").setup{
-  preset = 'minimal',
+  preset = 'miami-nights',
 }
