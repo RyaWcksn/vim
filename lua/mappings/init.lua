@@ -46,7 +46,7 @@ key("v", "<F5>", ":CarbonNowSh<CR>", opt)
 key("n", "<Up>", "<C-u>", opt)
 key("n", "<Down>", "<C-d>", opt)
 
-key("n", "hh", "zc", opt)
-key("n", "ll", "zo", opt)
+-- key("n", "hh", "zc", opt)
+-- key("n", "ll", "zo", opt)
 
 -- Unix specified keybinding, using meta as leader key

@@ -1,14 +1,12 @@
 local lsp = require('lspconfig')
 local codelens = require('vim.lsp.codelens')
-codelens.refresh()
-
-
-
 
 vim.api.nvim_set_hl(0, 'LspCodeLens', { link = 'WarningMsg', default = true })
 vim.api.nvim_set_hl(0, 'LspCodeLensText', { link = 'WarningMsg', default = true })
 vim.api.nvim_set_hl(0, 'LspCodeLensSign', { link = 'WarningMsg', default = true })
 vim.api.nvim_set_hl(0, 'LspCodeLensSeparator', { link = 'Boolean', default = true })
+
+vim.lsp.set_log_level("debug")
 
 local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
 for type, icon in pairs(signs) do
@@ -17,7 +15,7 @@ for type, icon in pairs(signs) do
 end
 
 local config = {
-	virtual_text = false,
+	virtual_text = true,
 	signs = {
 		active = signs,
 	},
@@ -44,6 +42,7 @@ vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.s
 
 local protocol = require('vim.lsp.protocol')
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
 
 -- Go LSP configuration
 lsp.gopls.setup {
@@ -87,6 +86,21 @@ lsp.gopls.setup {
 		},
 	},
 	codeLens = { enabled = true },
+}
+
+
+lsp.golangci_lint_ls.setup {
+	capabilities = capabilities,
+	default_config = {
+		cmd = { 'golangci-lint-langserver' },
+		root_dir = lsp.util.root_pattern('.golangci.yml', '.golangci.yaml', '.golangci.toml', '.golangci.json',
+			'go.work', 'go.mod', '.git'),
+		init_options = {
+			command = { "golangci-lint", "run", "--out-format", "json" },
+		}
+	},
+	filetypes = { 'go', 'gomod' }
+
 }
 
 -- Lua

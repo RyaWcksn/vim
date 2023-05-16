@@ -78,8 +78,6 @@ return require('packer').startup(function(use)
 	use { 'nvim-telescope/telescope-media-files.nvim' }
 	use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
 
-	use { "mfussenegger/nvim-dap" }
-
 	use {
 		'hrsh7th/nvim-cmp',
 		config = function()
@@ -92,6 +90,7 @@ return require('packer').startup(function(use)
 	use {
 		'saadparwaiz1/cmp_luasnip'
 	}
+	use { "rafamadriz/friendly-snippets" }
 	use {
 		'L3MON4D3/LuaSnip',
 		dependencies = { "rafamadriz/friendly-snippets" },
@@ -113,6 +112,40 @@ return require('packer').startup(function(use)
 		requires = 'nvim-tree/nvim-web-devicons',
 		config = function()
 			require('configs.bufferline')
+		end
+	}
+	use {
+		"klen/nvim-test",
+		config = function()
+			require('configs.test')
+		end
+	}
+
+	-- Debugging
+	use {
+		'mfussenegger/nvim-dap'
+	}
+	use {
+		"rcarriga/nvim-dap-ui",
+		config = function()
+			require("configs.dap")
+		end
+	}
+	use {
+		"jay-babu/mason-nvim-dap.nvim",
+		config = function()
+			require("configs.mason-dap")
+		end
+	}
+
+	use {
+		"olexsmir/gopher.nvim",
+		requires = { -- dependencies
+			"nvim-lua/plenary.nvim",
+			"nvim-treesitter/nvim-treesitter",
+		},
+		config = function()
+			require("configs.gopher")
 		end
 	}
 end)
