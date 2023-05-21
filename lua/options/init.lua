@@ -28,6 +28,7 @@ opt.cmdheight = 1
 opt.updatetime = 250 -- update interval for gitsigns
 opt.timeoutlen = 400
 opt.clipboard = "unnamed"
+opt.clipboard:append { "unnamedplus" }
 -- opt.foldmethod = "indent"
 -- opt.foldexpr = "nvim_treesitter#foldexpr()"
 -- opt.foldmethod = "expr"

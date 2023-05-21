@@ -6,6 +6,9 @@ vim.api.nvim_set_hl(0, 'LspCodeLensText', { link = 'WarningMsg', default = true 
 vim.api.nvim_set_hl(0, 'LspCodeLensSign', { link = 'WarningMsg', default = true })
 vim.api.nvim_set_hl(0, 'LspCodeLensSeparator', { link = 'Boolean', default = true })
 
+vim.o.updatetime = 250
+vim.cmd [[autocmd! CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false, scope="cursor"})]]
+
 vim.lsp.set_log_level("debug")
 
 local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
@@ -32,13 +35,14 @@ local config = {
 	},
 }
 vim.diagnostic.config(config)
-vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
-	border = "single",
-})
 
-vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
-	border = "single",
-})
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
+vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
+vim.lsp.handlers["textDocument/publishDiagnostics"] =
+    vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
+	    virtual_text = true,
+	    update_in_insert = false,
+    })
 
 local protocol = require('vim.lsp.protocol')
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
@@ -108,3 +112,13 @@ lsp.lua_ls.setup {
 	capabilities = capabilities,
 	codeLens = { enabled = true },
 }
+
+-- typescript / Javascript
+lsp.tsserver.setup {
+	capabilities = capabilities,
+	filetypes = { "typescript", "typescriptreact", "typescript.tsx", "javascriptreact", "javascript" },
+	cmd = { "typescript-language-server", "--stdio" }
+}
+
+-- Tailwind
+lsp.tailwindcss.setup {}

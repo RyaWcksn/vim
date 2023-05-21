@@ -135,6 +135,7 @@ wk.register({
 	o = {
 		name = "+Open",
 		e = { ":NvimTreeToggle<CR>", "NvimTree" },
+		t = { ":ToggleTerm<CR>", "ToggleTerm" },
 	},
 	l = {
 		name = "+LSP",
@@ -149,4 +150,5 @@ wk.register({
 		r = { ":lua vim.lsp.buf.rename()<CR>", "Rename" },
 		t = { ":Telescope diagnostics<CR>", "Error Diagnostics" },
 	},
-},  {prefix = "<leader>", mode = "n", noremap = true })
+	K = { ":lua vim.lsp.buf.hover()<CR>", "Hover" },
+}, { prefix = "<leader>", mode = "n", noremap = true })

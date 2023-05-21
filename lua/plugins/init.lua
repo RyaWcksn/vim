@@ -137,7 +137,7 @@ return require('packer').startup(function(use)
 			require("configs.mason-dap")
 		end
 	}
-	use {'leoluz/nvim-dap-go'}
+	use { 'leoluz/nvim-dap-go' }
 
 	use {
 		"olexsmir/gopher.nvim",
@@ -149,4 +149,7 @@ return require('packer').startup(function(use)
 			require("configs.gopher")
 		end
 	}
+	use { "akinsho/toggleterm.nvim", tag = '*', config = function()
+		require("configs.toggleterm")
+	end }
 end)

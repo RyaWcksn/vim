@@ -101,8 +101,8 @@ telescope.setup({
                 ["<C-a>"] = actions.cycle_previewers_prev,
             },
             n = {
-                ["<C-p>"] = action_layout.toggle_preview
-
+                ["<C-p>"] = action_layout.toggle_preview,
+                ["q"] = actions.close,
             }
         }
 

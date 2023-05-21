@@ -13,10 +13,6 @@ key("n", "N", "Nzzzv", opt)
 key("n", "<C-L>", "zL", opt)
 key("n", "<C-H>", "zH", opt)
 
--- Lsp
-key("n", "lD", ":lua vim.lsp.buf.declaration()<CR>", opt)
-key("n", "ld", ":lua vim.lsp.buf.definition()<CR>", opt)
-key("n", "K", ":lua vim.lsp.buf.hover()<CR>", opt)
 
 -- Indent
 key("v", "J", ":m '>+1<CR>gv=gv", opt)
