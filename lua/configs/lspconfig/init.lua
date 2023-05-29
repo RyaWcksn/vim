@@ -120,5 +120,8 @@ lsp.tsserver.setup {
 	cmd = { "typescript-language-server", "--stdio" }
 }
 
+-- pyright
+lsp.pyright.setup{}
+
 -- Tailwind
 lsp.tailwindcss.setup {}
