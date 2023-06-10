@@ -149,6 +149,8 @@ wk.register({
 		L = { ":lua vim.lsp.codelens.refresh()<CR>", "Code Lens" },
 		r = { ":lua vim.lsp.buf.rename()<CR>", "Rename" },
 		t = { ":Telescope diagnostics<CR>", "Error Diagnostics" },
+		["["] = { ":lua vim.diagnostic.goto_prev()<CR>", "Prev Diagnostics" },
+		["]"] = { ":lua vim.diagnostic.goto_next()<CR>", "Next Diagnostics" },
 	},
 	K = { ":lua vim.lsp.buf.hover()<CR>", "Hover" },
 }, { prefix = "<leader>", mode = "n", noremap = true })

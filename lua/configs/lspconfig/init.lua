@@ -17,12 +17,13 @@ for type, icon in pairs(signs) do
 	vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
 end
 
+
 local config = {
 	virtual_text = true,
 	signs = {
 		active = signs,
 	},
-	update_in_insert = true,
+	update_in_insert = false,
 	underline = true,
 	severity_sort = true,
 	float = {

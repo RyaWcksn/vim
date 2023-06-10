@@ -42,6 +42,11 @@ key("v", "<F5>", ":CarbonNowSh<CR>", opt)
 key("n", "<Up>", "<C-u>", opt)
 key("n", "<Down>", "<C-d>", opt)
 
+-- Vim
+key("n", "K", ":lua vim.lsp.buf.hover()<CR>", opt)
+key('n', '[', ":lua vim.diagnostic.goto_prev()<CR>", opt)
+key('n', ']', ":lua vim.diagnostic.goto_next()<CR>", opt)
+
 -- key("n", "hh", "zc", opt)
 -- key("n", "ll", "zo", opt)
 
