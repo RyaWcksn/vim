@@ -152,4 +152,13 @@ return require('packer').startup(function(use)
 	use { "akinsho/toggleterm.nvim", tag = '*', config = function()
 		require("configs.toggleterm")
 	end }
+
+	use {
+		"windwp/nvim-autopairs",
+		wants = "nvim-treesitter",
+		module = { "nvim-autopairs.completion.cmp", "nvim-autopairs" },
+		config = function()
+			require("configs.autopairs")
+		end,
+	}
 end)
