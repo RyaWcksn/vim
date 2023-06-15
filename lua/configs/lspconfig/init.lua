@@ -126,3 +126,8 @@ lsp.pyright.setup{}
 
 -- Tailwind
 lsp.tailwindcss.setup {}
+
+-- Mysql
+lsp.sqlls.setup {
+	cmd = { "typescript-language-server", "--stdio" }
+}

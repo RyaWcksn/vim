@@ -36,10 +36,10 @@ vim.opt.winbar = status_line()
 
 vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
 vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
-vim.cmd.colorscheme("noirbuddy")
+vim.opt.background = "dark" -- set this to dark or light
+vim.cmd("colorscheme oxocarbon")
 
 
-vim.o.background = style
 opt.hlsearch = false
 opt.undofile = true
 opt.ruler = false
@@ -56,6 +56,7 @@ opt.updatetime = 250 -- update interval for gitsigns
 opt.timeoutlen = 400
 opt.clipboard = "unnamed"
 opt.clipboard:append { "unnamedplus" }
+opt.foldenable = false
 -- opt.foldmethod = "indent"
 -- opt.foldexpr = "nvim_treesitter#foldexpr()"
 -- opt.foldmethod = "expr"

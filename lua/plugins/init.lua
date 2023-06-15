@@ -13,6 +13,10 @@ return require('packer').startup(function(use)
 		end
 	}
 
+	-- Database
+	use { 'tpope/vim-dadbod' }
+	use { 'kristijanhusak/vim-dadbod-ui' }
+
 	use {
 		"williamboman/mason-lspconfig.nvim"
 	}
@@ -23,13 +27,14 @@ return require('packer').startup(function(use)
 			require('configs.lspconfig')
 		end
 	}
-	use {
-		"jesseleite/nvim-noirbuddy",
-		requires = { "tjdevries/colorbuddy.nvim", branch = "dev" },
-		config = function()
-			require('configs.noirbuddy')
-		end
-	}
+	-- use {
+	-- 	"jesseleite/nvim-noirbuddy",
+	-- 	requires = { "tjdevries/colorbuddy.nvim", branch = "dev" },
+	-- 	config = function()
+	-- 		require('configs.noirbuddy')
+	-- 	end
+	-- }
+	use { 'nyoom-engineering/oxocarbon.nvim' }
 
 
 	use {

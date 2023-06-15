@@ -152,5 +152,15 @@ wk.register({
 		["["] = { ":lua vim.diagnostic.goto_prev()<CR>", "Prev Diagnostics" },
 		["]"] = { ":lua vim.diagnostic.goto_next()<CR>", "Next Diagnostics" },
 	},
+	d = {
+		name = "+DB",
+		u = { ':DBUIToggle<CR>', 'Toggle DBUI' },
+		f = { ':DBUIFindBuffer<CR>', 'Find Buffer in DBUI' },
+		r = { ':DBUIRenameBuffer<CR>', 'Rename Buffer in DBUI' },
+		l = { ':DBUILastQueryInfo<CR>', 'Show Last Query Info in DBUI' }
+	},
 	K = { ":lua vim.lsp.buf.hover()<CR>", "Hover" },
+}, { prefix = "<leader>", mode = "n", noremap = true })
+
+wk.register({
 }, { prefix = "<leader>", mode = "n", noremap = true })
