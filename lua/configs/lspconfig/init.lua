@@ -127,6 +127,9 @@ lsp.pyright.setup{}
 -- Tailwind
 lsp.tailwindcss.setup {}
 
+-- Dart
+lsp.dartls.setup {}
+
 -- Mysql
 lsp.sqlls.setup {
 	cmd = { "typescript-language-server", "--stdio" }
