@@ -150,3 +150,5 @@ pcall(function()
 end)
 require("telescope").load_extension("media_files")
 require("telescope").load_extension("fzf")
+
+require("telescope").load_extension("flutter")

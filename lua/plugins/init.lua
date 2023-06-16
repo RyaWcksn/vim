@@ -13,6 +13,14 @@ return require('packer').startup(function(use)
 		end
 	}
 
+	-- RPC
+	use {
+		'andweeb/presence.nvim',
+		config = function ()
+			require('configs.presence')
+		end
+	}
+
 	-- Database
 	use { 'tpope/vim-dadbod' }
 	use { 'kristijanhusak/vim-dadbod-ui' }
@@ -26,6 +34,16 @@ return require('packer').startup(function(use)
 		config = function()
 			require('configs.lspconfig')
 		end
+	}
+
+	-- Flutter
+	--
+	use {
+		"akinsho/flutter-tools.nvim",
+		requires = { "nvim-lua/plenary.nvim" },
+		config = function()
+			require("configs.flutter")
+		end,
 	}
 	-- use {
 	-- 	"jesseleite/nvim-noirbuddy",

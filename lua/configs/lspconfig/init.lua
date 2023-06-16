@@ -122,13 +122,15 @@ lsp.tsserver.setup {
 }
 
 -- pyright
-lsp.pyright.setup{}
+lsp.pyright.setup {}
 
 -- Tailwind
 lsp.tailwindcss.setup {}
 
+
+
 -- Dart
-lsp.dartls.setup {}
+-- lsp.dartls.setup {}
 
 -- Mysql
 lsp.sqlls.setup {
