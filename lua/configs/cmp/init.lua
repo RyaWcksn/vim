@@ -55,6 +55,15 @@ cmp.setup({
 	sources = {
 		{ name = "luasnip" },
 		{ name = 'nvim_lsp' },
+		{ name = "path" },
+		{ name = "cmp_tabnine" },
+		{ name = "nvim_lua" },
+		{ name = "buffer" },
+		{ name = "calc" },
+		{ name = "emoji" },
+		{ name = "treesitter" },
+		{ name = "crates" },
+		{ name = "tmux" },
 	},
 	confirm_opts = {
 		behavior = cmp.ConfirmBehavior.Replace,

@@ -22,8 +22,13 @@ require("lazy").setup({
 		"williamboman/mason.nvim",
 		config = function()
 			require('configs.mason')
-		end
+		end,
+		cmd = { "Mason", "MasonInstall", "MasonUninstall", "MasonUninstallAll", "MasonLog" },
+		event = "User FileOpened",
+		lazy = true,
 	},
+
+	{ "mfussenegger/nvim-jdtls", ft = { "java" }},
 
 	-- RPC
 	{
@@ -38,14 +43,19 @@ require("lazy").setup({
 	{ 'kristijanhusak/vim-dadbod-ui' },
 
 	{
-		"williamboman/mason-lspconfig.nvim"
+		"williamboman/mason-lspconfig.nvim",
+		lazy = true,
+		cmd = { "LspInstall", "LspUninstall" },
+		event = "User FileOpened",
+		dependencies = "mason.nvim",
 	},
 	-- Lsp
 	{
 		'neovim/nvim-lspconfig',
 		config = function()
 			require('configs.lspconfig')
-		end
+		end,
+		lazy = true,
 	},
 
 	-- Flutter
@@ -58,7 +68,6 @@ require("lazy").setup({
 		end,
 	},
 	--  {
-	-- 	"jesseleite/nvim-noirbuddy",
 	-- 	dependencies = { "tjdevries/colorbuddy.nvim", branch = "dev" },,
 	-- 	config = function()
 	-- 		require('configs.noirbuddy')
@@ -71,7 +80,9 @@ require("lazy").setup({
 		"folke/which-key.nvim",
 		config = function()
 			require('configs.whichkey')
-		end
+		end,
+		cmd = "WhichKey",
+		event = "VeryLazy",
 	},
 	-- Lazy loading:
 	-- Load on specific commands
@@ -83,7 +94,21 @@ require("lazy").setup({
 		run = ':TSUpdate',
 		config = function()
 			require('configs.treesitter')
-		end
+		end,
+		cmd = {
+			"TSInstall",
+			"TSUninstall",
+			"TSUpdate",
+			"TSUpdateSync",
+			"TSInstallInfo",
+			"TSInstallSync",
+			"TSInstallFromGrammar",
+		},
+		event = "User FileOpened",
+	},
+	{
+		"nvim-treesitter/nvim-treesitter-context",
+		lazy = false,
 	},
 	{ 'nvim-treesitter/playground' },
 
@@ -92,16 +117,19 @@ require("lazy").setup({
 	{
 		'nvim-tree/nvim-tree.lua',
 		dependencies = 'nvim-tree/nvim-web-devicons',
+		cmd = { "NvimTreeToggle", "NvimTreeOpen", "NvimTreeFocus", "NvimTreeFindFileToggle" },
 		config = function()
 			require('configs/nvim-tree')
-		end
+		end,
+		event = "User DirOpened",
 	},
 	{
 		'nvim-lualine/lualine.nvim',
 		dependencies = { 'nvim-tree/nvim-web-devicons', opt = true },
 		config = function()
 			require('configs.lualine')
-		end
+		end,
+		event = "VimEnter",
 	},
 	-- Telescope
 	{ 'nvim-lua/plenary.nvim' },
@@ -109,7 +137,9 @@ require("lazy").setup({
 		'nvim-telescope/telescope.nvim',
 		config = function()
 			require('configs.telescope')
-		end
+		end,
+		lazy = true,
+		cmd = "Telescope",
 	},
 	{ 'nvim-telescope/telescope-media-files.nvim' },
 	{ 'nvim-telescope/telescope-fzf-native.nvim', make = 'make' },
@@ -118,21 +148,29 @@ require("lazy").setup({
 		'hrsh7th/nvim-cmp',
 		config = function()
 			require('configs.cmp')
-		end
+		end,
+		event = { "InsertEnter", "CmdlineEnter" },
+		dependencies = {
+			"cmp-nvim-lsp",
+			"cmp_luasnip",
+			"cmp-buffer",
+			"cmp-path",
+		},
 	},
-	{
-		'hrsh7th/cmp-nvim-lsp'
-	},
-	{
-		'saadparwaiz1/cmp_luasnip'
-	},
-	{ "rafamadriz/friendly-snippets" },
+	{ "hrsh7th/cmp-nvim-lsp",         lazy = true },
+	{ "saadparwaiz1/cmp_luasnip",     lazy = true },
+	{ "hrsh7th/cmp-buffer",           lazy = true },
+	{ "hrsh7th/cmp-path",             lazy = true },
+	{ "rafamadriz/friendly-snippets", lazy = true },
 	{
 		'L3MON4D3/LuaSnip',
-		dependencies = { "rafamadriz/friendly-snippets" },
 		config = function()
 			require('configs.snippet')
-		end
+		end,
+		event = "InsertEnter",
+		dependencies = {
+			"friendly-snippets",
+		},
 	},
 
 	{
@@ -200,189 +238,3 @@ require("lazy").setup({
 		end,
 	},
 })
-
--- Only required if you have packer configured as `opt`
--- vim.cmd [[packadd packer.nvim]]
--- 
--- return require('packer').startup(function(use)
--- 	-- Packer can manage itself
--- 	use 'wbthomason/packer.nvim'
--- 	use {
--- 		"williamboman/mason.nvim",
--- 		config = function()
--- 			require('configs.mason')
--- 		end
--- 	}
--- 
--- 	-- RPC
--- 	use {
--- 		'andweeb/presence.nvim',
--- 		config = function()
--- 			require('configs.presence')
--- 		end
--- 	}
--- 
--- 	-- Database
--- 	use { 'tpope/vim-dadbod' }
--- 	use { 'kristijanhusak/vim-dadbod-ui' }
--- 
--- 	use {
--- 		"williamboman/mason-lspconfig.nvim"
--- 	}
--- 	-- Lsp
--- 	use {
--- 		'neovim/nvim-lspconfig',
--- 		config = function()
--- 			require('configs.lspconfig')
--- 		end
--- 	}
--- 
--- 	-- Flutter
--- 	--
--- 	use {
--- 		"akinsho/flutter-tools.nvim",
--- 		requires = { "nvim-lua/plenary.nvim" },
--- 		config = function()
--- 			require("configs.flutter")
--- 		end,
--- 	}
--- 	-- use {
--- 	-- 	"jesseleite/nvim-noirbuddy",
--- 	-- 	requires = { "tjdevries/colorbuddy.nvim", branch = "dev" },
--- 	-- 	config = function()
--- 	-- 		require('configs.noirbuddy')
--- 	-- 	end
--- 	-- }
--- 	use { 'nyoom-engineering/oxocarbon.nvim' }
--- 
--- 
--- 	use {
--- 		"folke/which-key.nvim",
--- 		config = function()
--- 			require('configs.whichkey')
--- 		end
--- 	}
--- 	-- Lazy loading:
--- 	-- Load on specific commands
--- 	use { 'tpope/vim-dispatch', opt = true, cmd = { 'Dispatch', 'Make', 'Focus', 'Start' } }
--- 
--- 	-- Post-install/update hook with neovim command
--- 	use {
--- 		'nvim-treesitter/nvim-treesitter', run = ':TSUpdate',
--- 		config = function()
--- 			require('configs.treesitter')
--- 		end
--- 	}
--- 	use { 'nvim-treesitter/playground' }
--- 
--- 	-- You can alias plugin names
--- 	use { 'dracula/vim', as = 'dracula' }
--- 	use {
--- 		'nvim-tree/nvim-tree.lua',
--- 		requires = 'nvim-tree/nvim-web-devicons',
--- 		config = function()
--- 			require('configs/nvim-tree')
--- 		end
--- 	}
--- 	use {
--- 		'nvim-lualine/lualine.nvim',
--- 		requires = { 'nvim-tree/nvim-web-devicons', opt = true },
--- 		config = function()
--- 			require('configs.lualine')
--- 		end
--- 	}
--- 	-- Telescope
--- 	use { 'nvim-lua/plenary.nvim' }
--- 	use {
--- 		'nvim-telescope/telescope.nvim',
--- 		config = function()
--- 			require('configs.telescope')
--- 		end
--- 	}
--- 	use { 'nvim-telescope/telescope-media-files.nvim' }
--- 	use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
--- 
--- 	use {
--- 		'hrsh7th/nvim-cmp',
--- 		config = function()
--- 			require('configs.cmp')
--- 		end
--- 	}
--- 	use {
--- 		'hrsh7th/cmp-nvim-lsp'
--- 	}
--- 	use {
--- 		'saadparwaiz1/cmp_luasnip'
--- 	}
--- 	use { "rafamadriz/friendly-snippets" }
--- 	use {
--- 		'L3MON4D3/LuaSnip',
--- 		dependencies = { "rafamadriz/friendly-snippets" },
--- 		config = function()
--- 			require('configs.snippet')
--- 		end
--- 	}
--- 
--- 	use {
--- 		'TimUntersberger/neogit',
--- 		requires = 'nvim-lua/plenary.nvim',
--- 		config = function()
--- 			require('configs.neogit')
--- 		end
--- 	}
--- 	use {
--- 		'akinsho/bufferline.nvim',
--- 		tag = "*",
--- 		requires = 'nvim-tree/nvim-web-devicons',
--- 		config = function()
--- 			require('configs.bufferline')
--- 		end
--- 	}
--- 	use {
--- 		"klen/nvim-test",
--- 		config = function()
--- 			require('configs.test')
--- 		end
--- 	}
--- 
--- 	-- Debugging
--- 	use {
--- 		'mfussenegger/nvim-dap'
--- 	}
--- 	use {
--- 		"rcarriga/nvim-dap-ui",
--- 		config = function()
--- 			require("configs.dap")
--- 		end
--- 	}
--- 	use {
--- 		"jay-babu/mason-nvim-dap.nvim",
--- 		config = function()
--- 			require("configs.mason-dap")
--- 		end
--- 	}
--- 	use { 'leoluz/nvim-dap-go' }
--- 
--- 	use {
--- 		"olexsmir/gopher.nvim",
--- 		requires = { -- dependencies
--- 			"nvim-lua/plenary.nvim",
--- 			"nvim-treesitter/nvim-treesitter",
--- 		},
--- 		config = function()
--- 			require("configs.gopher")
--- 		end
--- 	}
--- 	use { "akinsho/toggleterm.nvim", tag = '*', config = function()
--- 		require("configs.toggleterm")
--- 	end }
--- 
--- 	use {
--- 		"windwp/nvim-autopairs",
--- 		wants = "nvim-treesitter",
--- 		module = { "nvim-autopairs.completion.cmp", "nvim-autopairs" },
--- 		config = function()
--- 			require("configs.autopairs")
--- 		end,
--- 	}
--- end)
