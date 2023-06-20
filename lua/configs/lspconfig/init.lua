@@ -50,6 +50,7 @@ local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 
 -- Go LSP configuration
+local pyright = vim.fn.stdpath("data") .. "/mason/bin/pyright-langserver"
 lsp.gopls.setup {
 	capabilities = capabilities,
 	default_config = {
@@ -122,7 +123,10 @@ lsp.tsserver.setup {
 }
 
 -- pyright
-lsp.pyright.setup {}
+local pyright = vim.fn.stdpath("data") .. "/mason/bin/pyright-langserver"
+lsp.pyright.setup {
+	cmd = {pyright, "--stdio"}
+}
 
 -- Tailwind
 lsp.tailwindcss.setup {}
@@ -136,3 +140,4 @@ lsp.tailwindcss.setup {}
 lsp.sqlls.setup {
 	cmd = { "typescript-language-server", "--stdio" }
 }
+

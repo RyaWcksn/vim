@@ -1,4 +1,4 @@
--- This file can be loaded by calling `lua require('plugins')` from your init.vim
+-- This file can be loaded by calling `lua require('plugins')` from your init.vimplinon
 --
 --
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -24,11 +24,12 @@ require("lazy").setup({
 			require('configs.mason')
 		end,
 		cmd = { "Mason", "MasonInstall", "MasonUninstall", "MasonUninstallAll", "MasonLog" },
-		event = "User FileOpened",
-		lazy = true,
 	},
 
-	{ "mfussenegger/nvim-jdtls", ft = { "java" }},
+	{
+		"mfussenegger/nvim-jdtls",
+		ft = "java"
+	},
 
 	-- RPC
 	{
@@ -44,9 +45,7 @@ require("lazy").setup({
 
 	{
 		"williamboman/mason-lspconfig.nvim",
-		lazy = true,
 		cmd = { "LspInstall", "LspUninstall" },
-		event = "User FileOpened",
 		dependencies = "mason.nvim",
 	},
 	-- Lsp
@@ -55,7 +54,6 @@ require("lazy").setup({
 		config = function()
 			require('configs.lspconfig')
 		end,
-		lazy = true,
 	},
 
 	-- Flutter
