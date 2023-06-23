@@ -49,10 +49,25 @@ local protocol = require('vim.lsp.protocol')
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 
+
+-- inlay_hin0
+
+local on_attach = function(client, bufnr)
+	if client.server_capabilities.inlayHintProvider then
+		vim.api.nvim_create_autocmd({ 'InsertEnter' }, {
+			callback = function() vim.lsp.buf.inlay_hint(0, true) end,
+		})
+		vim.api.nvim_create_autocmd({ 'InsertLeave' }, {
+			callback = function() vim.lsp.buf.inlay_hint(0, false) end,
+		})
+	end
+end
+
+
 -- Go LSP configuration
-local pyright = vim.fn.stdpath("data") .. "/mason/bin/pyright-langserver"
 lsp.gopls.setup {
 	capabilities = capabilities,
+	on_attach = on_attach,
 	default_config = {
 		cmd = { 'gopls' },
 		filetypes = { 'go' },
@@ -88,6 +103,15 @@ lsp.gopls.setup {
 				diagnosticsDelay = '500ms',
 				symbolMatcher = 'fuzzy',
 				buildFlags = { '-tags', 'integration' },
+				hints = {
+					assignVariableTypes = true,
+					compositeLiteralFields = true,
+					compositeLiteralTypes = true,
+					constantValues = true,
+					functionTypeParameters = true,
+					parameterNames = true,
+					rangeVariableTypes = true,
+				},
 			},
 		},
 	},
@@ -97,6 +121,7 @@ lsp.gopls.setup {
 
 lsp.golangci_lint_ls.setup {
 	capabilities = capabilities,
+	on_attach = on_attach,
 	default_config = {
 		cmd = { 'golangci-lint-langserver' },
 		root_dir = lsp.util.root_pattern('.golangci.yml', '.golangci.yaml', '.golangci.toml', '.golangci.json',
@@ -112,26 +137,67 @@ lsp.golangci_lint_ls.setup {
 -- Lua
 lsp.lua_ls.setup {
 	capabilities = capabilities,
+	on_attach = on_attach,
 	codeLens = { enabled = true },
+	settings = { Lua = { hint = { enable = true } } }
 }
 
 -- typescript / Javascript
 lsp.tsserver.setup {
 	capabilities = capabilities,
 	filetypes = { "typescript", "typescriptreact", "typescript.tsx", "javascriptreact", "javascript" },
-	cmd = { "typescript-language-server", "--stdio" }
+	cmd = { "typescript-language-server", "--stdio" },
+	on_attach = on_attach,
+	settings = {
+		javascript = {
+			inlayHints = {
+				includeInlayEnumMemberValueHints = true,
+				includeInlayFunctionLikeReturnTypeHints = true,
+				includeInlayFunctionParameterTypeHints = true,
+				includeInlayParameterNameHints = "all", -- 'none' | 'literals' | 'all';
+				includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+				includeInlayPropertyDeclarationTypeHints = true,
+				includeInlayVariableTypeHints = true,
+			},
+		},
+		typescript = {
+			inlayHints = {
+				includeInlayEnumMemberValueHints = true,
+				includeInlayFunctionLikeReturnTypeHints = true,
+				includeInlayFunctionParameterTypeHints = true,
+				includeInlayParameterNameHints = "all", -- 'none' | 'literals' | 'all';
+				includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+				includeInlayPropertyDeclarationTypeHints = true,
+				includeInlayVariableTypeHints = true,
+			},
+		},
+	}
 }
 
 -- pyright
 local pyright = vim.fn.stdpath("data") .. "/mason/bin/pyright-langserver"
 lsp.pyright.setup {
-	cmd = {pyright, "--stdio"}
+	cmd = { pyright, "--stdio" },
+	on_attach = on_attach,
 }
 
 -- Tailwind
-lsp.tailwindcss.setup {}
+lsp.tailwindcss.setup {
+	on_attach = on_attach,
+}
 
+-- PHP
+lsp.intelephense.setup({
+	cmd = { "intelephense", "--stdio" },
+	filetypes = { "php" },
+	on_attach = on_attach,
+	root_dir = lsp.util.root_pattern("composer.json", ".git")
+})
 
+lsp.phpactor.setup {}
+lsp.cssls.setup {}
+lsp.html.setup {}
+lsp.bashls.setup {}
 
 -- Dart
 -- lsp.dartls.setup {}
@@ -140,4 +206,3 @@ lsp.tailwindcss.setup {}
 lsp.sqlls.setup {
 	cmd = { "typescript-language-server", "--stdio" }
 }
-
