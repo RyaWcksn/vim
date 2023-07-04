@@ -1,9 +1,9 @@
 local jdtls_path = vim.fn.stdpath("data") .. "/mason/packages/jdtls"
-local jdtls_path = vim.fn.stdpath("data") .. "/mason/packages/jdtls"
 local lombok_path = vim.fn.stdpath("data") .. "/mason/packages/jdtls/lombok.jar"
 local jar_path = jdtls_path .. '/plugins/org.eclipse.equinox.launcher_1.6.400.v20210924-0641.jar'
 local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')
 local workspace_dir = vim.fn.expand('$HOME/Sandbox/workspace/') .. project_name
+os.execute("mkdir -p " .. workspace_dir)
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 -- See `:help vim.lsp.start_client` for an overview of the supported `config` options.
 --
@@ -41,14 +41,8 @@ local config = {
 		'-data', workspace_dir
 	},
 
-	-- 💀
-	-- This is the default if not provided, you can remove it. Or adjust as needed.
-	-- One dedicated LSP server & client will be started per unique root_dir
 	root_dir = require('jdtls.setup').find_root({ '.git', 'mvnw', 'gradlew' }),
 
-	-- Here you can configure eclipse.jdt.ls specific settings
-	-- See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
-	-- for a list of options
 	sources = {
 		organizeImports = {
 			starThreshold = 9999,
@@ -60,6 +54,12 @@ local config = {
 	},
 	configuration = {
 		updateBuildConfiguration = "interactive",
+		runtimes = {
+			{
+				name = "JavaSE-1.20",
+				path = "/usr/lib/jvm/java-20-openjdk-amd64/",
+			},
+		},
 	},
 	maven = {
 		downloadSources = true,

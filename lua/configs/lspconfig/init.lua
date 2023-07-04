@@ -135,11 +135,36 @@ lsp.golangci_lint_ls.setup {
 }
 
 -- Lua
+local default_workspace = {
+	library = {
+		"${3rd}/busted/library",
+		"${3rd}/luassert/library",
+		"${3rd}/luv/library",
+	},
+
+	maxPreload = 5000,
+	preloadFileSize = 10000,
+}
 lsp.lua_ls.setup {
 	capabilities = capabilities,
 	on_attach = on_attach,
 	codeLens = { enabled = true },
-	settings = { Lua = { hint = { enable = true } } }
+	settings = {
+		Lua = {
+			hint = { enable = true },
+			telemetry = { enable = false },
+			runtime = {
+				version = "LuaJIT",
+				special = {
+					reload = "require",
+				},
+			},
+			diagnostics = {
+				globals = { "vim", "lvim", "reload" },
+			},
+			workspace = default_workspace,
+		}
+	}
 }
 
 -- typescript / Javascript
