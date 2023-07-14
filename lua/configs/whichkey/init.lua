@@ -2,28 +2,6 @@ local wk = require("which-key")
 
 
 -- Function to open URL under cursor
-function open_url()
-	-- Get the current line under the cursor
-	local line = vim.fn.getline('.')
-
-	-- Extract the URL from the line using a regular expression pattern match
-	local url = string.match(line, "%[(http[s]?://.-)%]")
-	print(url)
-
-	-- Check if a URL is found
-	if url then
-		-- Execute the shell command to open the URL
-		local command = 'xdg-open ' .. url
-		vim.fn.jobstart(command, { detach = true })
-
-		-- Print a message indicating that the URL is being opened
-		print('Opening URL: ' .. url)
-	else
-		-- Print a message indicating that no URL is found
-		print('No URL found under cursor')
-	end
-end
-
 wk.setup {
 	{
 		plugins = {
@@ -160,7 +138,6 @@ wk.register({
 		name = "+Open",
 		e = { ":NvimTreeToggle<CR>", "NvimTree" },
 		t = { ":ToggleTerm<CR>", "ToggleTerm" },
-		w = { open_url(), "OpenURL" },
 	},
 	l = {
 		name = "+LSP",
