@@ -94,6 +94,12 @@ wk.setup {
 }
 
 wk.register({
+	b = {
+		name = "+Buffer",
+		b = {":Telescope buffers<CR>", "Open Buffers"},
+		d = {":bd<CR>", "Delete This Buffer"},
+		a = {":w <bar> %bd <bar> e# <bar> bd# <CR>", "Delete All But This Buffer"},
+	},
 	w = {
 		name = "+Window",
 		k = { "<c-w>k", "Switch Up" },

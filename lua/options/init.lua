@@ -7,30 +7,25 @@ opt.fillchars = { eob = " " }
 g.ultest_use_pty = 1
 g.do_filetype_lua = 1
 
-local function status_line()
-  local mode = "%-5{%v:lua.string.upper(v:lua.vim.fn.mode())%}"
-  local file_name = "%-.16t"
-  local buf_nr = "[%n]"
-  local modified = " %-m"
-  local file_type = " %y"
-  local right_align = "%="
-  local line_no = "%10([%l/%L%)]"
-  local pct_thru_file = "%5p%%"
 
-  return string.format(
-    "%s%s%s%s%s%s%s%s",
-    mode,
-    file_name,
-    buf_nr,
-    modified,
-    file_type,
-    right_align,
-    line_no,
-    pct_thru_file
-  )
+
+-- Call the function to get the number of LSP buffers and print it
+
+local function status_line()
+	local file_name = vim.api.nvim_eval_statusline("%f", {}).str
+	local modified = " %-m"
+	local file_type = " %y"
+
+	file_name = file_name:gsub('/', ' > ')
+
+	return string.format(
+		"%s %s %s",
+		file_type,
+		file_name,
+		modified
+	)
 end
 
--- vim.opt.statusline = status_line()
 vim.opt.winbar = status_line()
 
 
@@ -71,28 +66,28 @@ vim.wo.wrap = false
 
 
 local disabled_built_ins = {
-  "2html_plugin",
-  "getscript",
-  "getscriptPlugin",
-  "gzip",
-  "logipat",
-  "netrw",
-  "netrwPlugin",
-  "netrwSettings",
-  "netrwFileHandlers",
-  "matchit",
-  "matchparen",
-  "tar",
-  "tarPlugin",
-  "rrhelper",
-  "vimball",
-  "vimballPlugin",
-  "zip",
-  "zipPlugin",
+	"2html_plugin",
+	"getscript",
+	"getscriptPlugin",
+	"gzip",
+	"logipat",
+	"netrw",
+	"netrwPlugin",
+	"netrwSettings",
+	"netrwFileHandlers",
+	"matchit",
+	"matchparen",
+	"tar",
+	"tarPlugin",
+	"rrhelper",
+	"vimball",
+	"vimballPlugin",
+	"zip",
+	"zipPlugin",
 }
 
 for _, plugin in pairs(disabled_built_ins) do
-  g["loaded_" .. plugin] = 1
+	g["loaded_" .. plugin] = 1
 end
 
 

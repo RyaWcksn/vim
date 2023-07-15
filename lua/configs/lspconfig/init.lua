@@ -1,5 +1,4 @@
 local lsp = require('lspconfig')
-local codelens = require('vim.lsp.codelens')
 
 vim.api.nvim_set_hl(0, 'LspCodeLens', { link = 'WarningMsg', default = true })
 vim.api.nvim_set_hl(0, 'LspCodeLensText', { link = 'WarningMsg', default = true })
@@ -37,16 +36,51 @@ local config = {
 }
 vim.diagnostic.config(config)
 
-vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
 vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
 vim.lsp.handlers["textDocument/publishDiagnostics"] =
     vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
 	    virtual_text = true,
 	    update_in_insert = false,
     })
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
 
-local protocol = require('vim.lsp.protocol')
-local capabilities = require('cmp_nvim_lsp').default_capabilities()
+local on_references = vim.lsp.handlers["textDocument/references"]
+vim.lsp.handlers["textDocument/references"] = vim.lsp.with(on_references, { loclist = true, virtual_text = true })
+
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
+	border = "rounded",
+})
+
+vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
+	border = "rounded",
+})
+
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+
+-- Code actions
+capabilities.textDocument.codeAction = {
+	dynamicRegistration = true,
+	codeActionLiteralSupport = {
+		codeActionKind = {
+			valueSet = (function()
+				local res = vim.tbl_values(vim.lsp.protocol.CodeActionKind)
+				table.sort(res)
+				return res
+			end)(),
+		},
+	},
+}
+
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+capabilities.textDocument.completion.completionItem.resolveSupport = {
+	properties = { "documentation", "detail", "additionalTextEdits" },
+}
+capabilities.experimental = {}
+capabilities.experimental.hoverActions = true
+
+
+capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 
 
@@ -60,6 +94,21 @@ local on_attach = function(client, bufnr)
 		vim.api.nvim_create_autocmd({ 'InsertLeave' }, {
 			callback = function() vim.lsp.buf.inlay_hint(0, false) end,
 		})
+	end
+	if client.resolved_capabilities.document_highlight then
+		vim.api.nvim_exec(
+			[[
+				hi LspReferenceRead cterm=bold ctermbg=red guibg=#282f45
+				hi LspReferenceText cterm=bold ctermbg=red guibg=#282f45
+				hi LspReferenceWrite cterm=bold ctermbg=red guibg=#282f45
+				augroup lsp_document_highlight
+				autocmd! * <buffer>
+				autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
+				autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
+				augroup END
+			]],
+			false
+		)
 	end
 end
 
