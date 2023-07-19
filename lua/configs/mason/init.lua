@@ -1,5 +1,12 @@
 require("mason").setup()
 
 require("mason-lspconfig").setup({
-    ensure_installed = { "lua_ls", "tsserver", "tailwindcss", "gopls" }
+    ensure_installed = {
+	    "lua_ls",
+	    "tsserver",
+	    "tailwindcss",
+	    "gopls",
+	    "pyright",
+	    "rust_analyzer",
+    }
 })

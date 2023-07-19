@@ -1,11 +1,20 @@
-require'nvim-treesitter.configs'.setup {
-  ensure_installed = {"go", "ruby", "javascript", "typescript", "lua", "tsx" },
+require 'nvim-treesitter.configs'.setup {
+	ensure_installed = {
+		"go",
+		"ruby",
+		"javascript",
+		"typescript",
+		"lua",
+		"tsx",
+		"rust",
+		"python",
+	},
 
-  sync_install = false,
+	sync_install = false,
 
-  auto_install = true,
+	auto_install = true,
 
-  highlight = {
-    enable = true,
-  },
+	highlight = {
+		enable = true,
+	},
 }
