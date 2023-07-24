@@ -58,19 +58,101 @@ vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.s
 vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 
--- Code actions
-capabilities.textDocument.codeAction = {
-	dynamicRegistration = true,
-	codeActionLiteralSupport = {
-		codeActionKind = {
-			valueSet = (function()
-				local res = vim.tbl_values(vim.lsp.protocol.CodeActionKind)
-				table.sort(res)
-				return res
-			end)(),
-		},
-	},
-}
+local function qf_rename()
+	local position_params = vim.lsp.util.make_position_params()
+	position_params.oldName = vim.fn.expand("<cword>")
+	position_params.newName = vim.fn.input("Rename To> ", position_params.oldName)
+
+	vim.lsp.buf_request(0, "textDocument/rename", position_params, function(err, result, ...)
+		if not result or not result.changes then
+			require('notify')(string.format('could not perform rename'), 'error', {
+				title = string.format('[lsp] rename: %s -> %s', position_params.oldName,
+					position_params.newName),
+				timeout = 2500
+			})
+
+			return
+		end
+
+		vim.lsp.handlers["textDocument/rename"](err, result, ...)
+
+		local notification, entries = '', {}
+		local num_files, num_updates = 0, 0
+		for uri, edits in pairs(result.changes) do
+			num_files = num_files + 1
+			local bufnr = vim.uri_to_bufnr(uri)
+
+			for _, edit in ipairs(edits) do
+				local start_line = edit.range.start.line + 1
+				local line = vim.api.nvim_buf_get_lines(bufnr, start_line - 1, start_line, false)[1]
+
+				num_updates = num_updates + 1
+				table.insert(entries, {
+					bufnr = bufnr,
+					lnum = start_line,
+					col = edit.range.start.character + 1,
+					text = line
+				})
+			end
+
+			local short_uri = string.sub(vim.uri_to_fname(uri), #vim.fn.getcwd() + 2)
+			notification = notification .. string.format('made %d change(s) in %s', #edits, short_uri)
+		end
+
+		require("notify")(notification, 'info', {
+			title = string.format('[lsp] rename: %s -> %s', position_params.oldName, position_params.newName),
+			timeout = 2500
+		})
+
+		if num_files > 1 then require("utils").qf_populate(entries, "r") end
+		-- print(string.format("updated %d instance(s) in %d file(s)", num_updates, num_files))
+	end)
+end
+vim.lsp.buf.rename = qf_rename
+
+local notify = require 'notify'
+vim.lsp.handlers['window/showMessage'] = function(_, result, ctx)
+	local client = vim.lsp.get_client_by_id(ctx.client_id)
+	local lvl = ({
+		'ERROR',
+		'WARN',
+		'INFO',
+		'DEBUG',
+	})[result.type]
+	notify({ result.message }, lvl, {
+		title = 'LSP | ' .. client.name,
+		timeout = 10000,
+		keep = function()
+			return lvl == 'ERROR' or lvl == 'WARN'
+		end,
+	})
+end
+
+local function show_code_actions(_, _, actions)
+	if not actions or vim.tbl_isempty(actions) then
+		print('No code actions available.')
+		return
+	end
+
+	local items = {}
+	for _, action in ipairs(actions) do
+		table.insert(items, {
+			label = action.title,
+			data = action,
+		})
+	end
+
+	local opts = {
+		relative = 'cursor',
+		style = 'minimal',
+		height = #items,
+		width = 50,
+		row = 0,
+		col = 1,
+	}
+
+	vim.lsp.util.open_floating_preview(items, 'plaintext', opts)
+end
 
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 capabilities.textDocument.completion.completionItem.resolveSupport = {
@@ -84,11 +166,10 @@ capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 
 
--- inlay_hin0
 
 local on_attach = function(client, bufnr)
 	if client.server_capabilities.inlayHintProvider then
-		vim.lsp.buf.inlay_hint(0, true)
+		vim.lsp.buf.inlay_hint(bufnr, true)
 	end
 	if client.resolved_capabilities.document_highlight then
 		vim.api.nvim_exec(
@@ -105,6 +186,7 @@ local on_attach = function(client, bufnr)
 			false
 		)
 	end
+	client.handlers['textDocument/codeAction'] = show_code_actions
 end
 
 

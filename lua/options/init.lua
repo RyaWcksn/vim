@@ -7,6 +7,8 @@ opt.fillchars = { eob = " " }
 g.ultest_use_pty = 1
 g.do_filetype_lua = 1
 
+vim.notify = require("notify")
+
 
 
 -- Call the function to get the number of LSP buffers and print it

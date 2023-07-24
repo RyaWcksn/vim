@@ -8,5 +8,6 @@ require("mason-lspconfig").setup({
 	    "gopls",
 	    "pyright",
 	    "rust_analyzer",
+	    "jdtls"
     }
 })

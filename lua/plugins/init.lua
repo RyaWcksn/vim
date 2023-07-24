@@ -18,6 +18,7 @@ vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = " " -- Make sure to set `mapleader` before lazy so your mappings are correct
 
 require("lazy").setup({
+	{ 'rcarriga/nvim-notify' },
 	{
 		"williamboman/mason.nvim",
 		config = function()
