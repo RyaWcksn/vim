@@ -1,9 +1,5 @@
 local lsp = require('lspconfig')
-
-vim.api.nvim_set_hl(0, 'LspCodeLens', { link = 'WarningMsg', default = true })
-vim.api.nvim_set_hl(0, 'LspCodeLensText', { link = 'WarningMsg', default = true })
-vim.api.nvim_set_hl(0, 'LspCodeLensSign', { link = 'WarningMsg', default = true })
-vim.api.nvim_set_hl(0, 'LspCodeLensSeparator', { link = 'Boolean', default = true })
+local notify = require 'notify'
 
 vim.o.updatetime = 250
 vim.cmd [[autocmd! CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false, scope="cursor"})]]
@@ -36,81 +32,20 @@ local config = {
 }
 vim.diagnostic.config(config)
 
-vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
-vim.lsp.handlers["textDocument/publishDiagnostics"] =
-    vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
-	    virtual_text = true,
-	    update_in_insert = false,
-    })
 vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
 
 local on_references = vim.lsp.handlers["textDocument/references"]
 vim.lsp.handlers["textDocument/references"] = vim.lsp.with(on_references, { loclist = true, virtual_text = true })
 
-vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
-	border = "rounded",
-})
+vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(
+	vim.lsp.handlers.signature_help, {
+		border = 'rounded',
+		close_events = { "CursorMoved", "BufHidden", "InsertCharPre" },
+	}
+)
 
-vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
-	border = "rounded",
-})
-
-vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 
-local function qf_rename()
-	local position_params = vim.lsp.util.make_position_params()
-	position_params.oldName = vim.fn.expand("<cword>")
-	position_params.newName = vim.fn.input("Rename To> ", position_params.oldName)
-
-	vim.lsp.buf_request(0, "textDocument/rename", position_params, function(err, result, ...)
-		if not result or not result.changes then
-			require('notify')(string.format('could not perform rename'), 'error', {
-				title = string.format('[lsp] rename: %s -> %s', position_params.oldName,
-					position_params.newName),
-				timeout = 2500
-			})
-
-			return
-		end
-
-		vim.lsp.handlers["textDocument/rename"](err, result, ...)
-
-		local notification, entries = '', {}
-		local num_files, num_updates = 0, 0
-		for uri, edits in pairs(result.changes) do
-			num_files = num_files + 1
-			local bufnr = vim.uri_to_bufnr(uri)
-
-			for _, edit in ipairs(edits) do
-				local start_line = edit.range.start.line + 1
-				local line = vim.api.nvim_buf_get_lines(bufnr, start_line - 1, start_line, false)[1]
-
-				num_updates = num_updates + 1
-				table.insert(entries, {
-					bufnr = bufnr,
-					lnum = start_line,
-					col = edit.range.start.character + 1,
-					text = line
-				})
-			end
-
-			local short_uri = string.sub(vim.uri_to_fname(uri), #vim.fn.getcwd() + 2)
-			notification = notification .. string.format('made %d change(s) in %s', #edits, short_uri)
-		end
-
-		require("notify")(notification, 'info', {
-			title = string.format('[lsp] rename: %s -> %s', position_params.oldName, position_params.newName),
-			timeout = 2500
-		})
-
-		if num_files > 1 then require("utils").qf_populate(entries, "r") end
-		-- print(string.format("updated %d instance(s) in %d file(s)", num_updates, num_files))
-	end)
-end
-vim.lsp.buf.rename = qf_rename
-
-local notify = require 'notify'
 vim.lsp.handlers['window/showMessage'] = function(_, result, ctx)
 	local client = vim.lsp.get_client_by_id(ctx.client_id)
 	local lvl = ({
@@ -128,31 +63,6 @@ vim.lsp.handlers['window/showMessage'] = function(_, result, ctx)
 	})
 end
 
-local function show_code_actions(_, _, actions)
-	if not actions or vim.tbl_isempty(actions) then
-		print('No code actions available.')
-		return
-	end
-
-	local items = {}
-	for _, action in ipairs(actions) do
-		table.insert(items, {
-			label = action.title,
-			data = action,
-		})
-	end
-
-	local opts = {
-		relative = 'cursor',
-		style = 'minimal',
-		height = #items,
-		width = 50,
-		row = 0,
-		col = 1,
-	}
-
-	vim.lsp.util.open_floating_preview(items, 'plaintext', opts)
-end
 
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 capabilities.textDocument.completion.completionItem.resolveSupport = {
@@ -160,12 +70,6 @@ capabilities.textDocument.completion.completionItem.resolveSupport = {
 }
 capabilities.experimental = {}
 capabilities.experimental.hoverActions = true
-
-
-capabilities = require('cmp_nvim_lsp').default_capabilities()
-
-
-
 
 local on_attach = function(client, bufnr)
 	if client.server_capabilities.inlayHintProvider then
@@ -186,355 +90,19 @@ local on_attach = function(client, bufnr)
 			false
 		)
 	end
-	client.handlers['textDocument/codeAction'] = show_code_actions
 end
 
-
--- Go LSP configuration
-lsp.gopls.setup {
-	capabilities = capabilities,
-	on_attach = on_attach,
-	default_config = {
-		cmd = { 'gopls' },
-		filetypes = { 'go' },
-		root_dir = lsp.util.root_pattern('.git', 'go.mod', '.'),
-		settings = {
-			gopls = {
-				analyses = {
-					unreachable = true,
-					nilness = true,
-					unusedparams = true,
-					useany = true,
-					unusedwrite = true,
-					ST1003 = true,
-					undeclaredname = true,
-					fillreturns = true,
-					nonewvars = true,
-					fieldalignment = false,
-					shadow = true,
-				},
-				codelenses = {
-					generate = true, -- show the `go generate` lens.
-					gc_details = true, -- Show a code lens toggling the display of gc's choices.
-					test = true,
-					tidy = true,
-					vendor = true,
-					regenerate_cgo = true,
-					upgrade_dependency = true,
-				},
-				staticcheck = true,
-				usePlaceholders = true,
-				completeUnimported = true,
-				matcher = 'Fuzzy',
-				diagnosticsDelay = '500ms',
-				symbolMatcher = 'fuzzy',
-				buildFlags = { '-tags', 'integration' },
-				hints = {
-					assignVariableTypes = true,
-					compositeLiteralFields = true,
-					compositeLiteralTypes = true,
-					constantValues = true,
-					functionTypeParameters = true,
-					parameterNames = true,
-					rangeVariableTypes = true,
-				},
-			},
-		},
-	},
-	codeLens = { enabled = true },
+local servers = {
+	gopls = require('configs.lspconfig.languages.gopls').gopls(capabilities, on_attach),
+	golangci_lint_ls = require('configs.lspconfig.languages.golang-ci').golangci(capabilities, on_attach),
+	pyright = require('configs.lspconfig.languages.pyright').pyright(capabilities, on_attach),
+	rust_analyzer = require('configs.lspconfig.languages.rust-analyzer').rustanalyzer(capabilities, on_attach),
+	tsserver = require('configs.lspconfig.languages.tsserver').tsserver(capabilities, on_attach),
+	tailwindcss = require('configs.lspconfig.languages.tailwindcss').tailwind(capabilities, on_attach),
+	lua_ls = require('configs.lspconfig.languages.lua-ls').lua_ls(capabilities, on_attach),
 }
 
+for server, cfg in pairs(servers) do
+	lsp[server].setup( cfg )
+end
 
-lsp.golangci_lint_ls.setup {
-	capabilities = capabilities,
-	on_attach = on_attach,
-	default_config = {
-		cmd = { 'golangci-lint-langserver' },
-		root_dir = lsp.util.root_pattern('.golangci.yml', '.golangci.yaml', '.golangci.toml', '.golangci.json',
-			'go.work', 'go.mod', '.git'),
-		init_options = {
-			command = { "golangci-lint", "run", "--out-format", "json" },
-		}
-	},
-	filetypes = { 'go', 'gomod' }
-
-}
-
--- Lua
-local default_workspace = {
-	library = {
-		"${3rd}/busted/library",
-		"${3rd}/luassert/library",
-		"${3rd}/luv/library",
-	},
-
-	maxPreload = 5000,
-	preloadFileSize = 10000,
-}
-lsp.lua_ls.setup {
-	capabilities = capabilities,
-	on_attach = on_attach,
-	codeLens = { enabled = true },
-	settings = {
-		Lua = {
-			hint = { enable = true },
-			telemetry = { enable = false },
-			runtime = {
-				version = "LuaJIT",
-				special = {
-					reload = "require",
-				},
-			},
-			diagnostics = {
-				globals = { "vim", "lvim", "reload" },
-			},
-			workspace = default_workspace,
-		}
-	}
-}
-
--- typescript / Javascript
-lsp.tsserver.setup {
-	capabilities = capabilities,
-	filetypes = { "typescript", "typescriptreact", "typescript.tsx", "javascriptreact", "javascript" },
-	cmd = { "typescript-language-server", "--stdio" },
-	on_attach = on_attach,
-	settings = {
-		javascript = {
-			inlayHints = {
-				includeInlayEnumMemberValueHints = true,
-				includeInlayFunctionLikeReturnTypeHints = true,
-				includeInlayFunctionParameterTypeHints = true,
-				includeInlayParameterNameHints = "all", -- 'none' | 'literals' | 'all';
-				includeInlayParameterNameHintsWhenArgumentMatchesName = true,
-				includeInlayPropertyDeclarationTypeHints = true,
-				includeInlayVariableTypeHints = true,
-			},
-		},
-		typescript = {
-			inlayHints = {
-				includeInlayEnumMemberValueHints = true,
-				includeInlayFunctionLikeReturnTypeHints = true,
-				includeInlayFunctionParameterTypeHints = true,
-				includeInlayParameterNameHints = "all", -- 'none' | 'literals' | 'all';
-				includeInlayParameterNameHintsWhenArgumentMatchesName = true,
-				includeInlayPropertyDeclarationTypeHints = true,
-				includeInlayVariableTypeHints = true,
-			},
-		},
-	}
-}
-
--- pyright
-local pyright = vim.fn.stdpath("data") .. "/mason/bin/pyright-langserver"
-lsp.pyright.setup {
-	cmd = { pyright, "--stdio" },
-	on_attach = on_attach,
-}
-
--- Tailwind
-lsp.tailwindcss.setup {
-	on_attach = on_attach,
-}
-
--- PHP
-lsp.intelephense.setup({
-	cmd = { "intelephense", "--stdio" },
-	filetypes = { "php" },
-	on_attach = on_attach,
-	root_dir = lsp.util.root_pattern("composer.json", ".git")
-})
-
-lsp.rust_analyzer.setup({
-	cmd = { "rust-analyzer" },
-	filetypes = { "rust" },
-	root_dir = lsp.util.root_pattern("Cargo.toml", "rust-project.json"),
-	settings = {
-		['rust-analyzer'] = {
-			diagnostics = {
-				enable = false,
-			}
-		}
-	},
-	capabilities = {
-		experimental = {
-			serverStatusNotification = true
-		},
-		general = {
-			positionEncodings = { "utf-16" }
-		},
-		textDocument = {
-			callHierarchy = {
-				dynamicRegistration = false
-			},
-			codeAction = {
-				codeActionLiteralSupport = {
-					codeActionKind = {
-						valueSet = { "", "quickfix", "refactor", "refactor.extract",
-							"refactor.inline", "refactor.rewrite", "source",
-							"source.organizeImports" }
-					}
-				},
-				dataSupport = true,
-				dynamicRegistration = true,
-				isPreferredSupport = true,
-				resolveSupport = {
-					properties = { "edit" }
-				}
-			},
-			completion = {
-				completionItem = {
-					commitCharactersSupport = false,
-					deprecatedSupport = false,
-					documentationFormat = { "markdown", "plaintext" },
-					preselectSupport = false,
-					snippetSupport = false
-				},
-				completionItemKind = {
-					valueSet = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-						20, 21, 22, 23, 24, 25 }
-				},
-				contextSupport = false,
-				dynamicRegistration = false
-			},
-			declaration = {
-				linkSupport = true
-			},
-			definition = {
-				dynamicRegistration = true,
-				linkSupport = true
-			},
-			documentHighlight = {
-				dynamicRegistration = false
-			},
-			documentSymbol = {
-				dynamicRegistration = false,
-				hierarchicalDocumentSymbolSupport = true,
-				symbolKind = {
-					valueSet = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-						20, 21, 22, 23, 24, 25, 26 }
-				}
-			},
-			formatting = {
-				dynamicRegistration = true
-			},
-			hover = {
-				contentFormat = { "markdown", "plaintext" },
-				dynamicRegistration = true
-			},
-			implementation = {
-				linkSupport = true
-			},
-			inlayHint = {
-				dynamicRegistration = true,
-				resolveSupport = {
-					properties = {}
-				}
-			},
-			publishDiagnostics = {
-				relatedInformation = true,
-				tagSupport = {
-					valueSet = { 1, 2 }
-				}
-			},
-			rangeFormatting = {
-				dynamicRegistration = true
-			},
-			references = {
-				dynamicRegistration = false
-			},
-			rename = {
-				dynamicRegistration = true,
-				prepareSupport = true
-			},
-			semanticTokens = {
-				augmentsSyntaxTokens = true,
-				dynamicRegistration = false,
-				formats = { "relative" },
-				multilineTokenSupport = false,
-				overlappingTokenSupport = true,
-				requests = {
-					full = {
-						delta = true
-					},
-					range = false
-				},
-				serverCancelSupport = false,
-				tokenModifiers = { "declaration", "definition", "readonly", "static", "deprecated",
-					"abstract", "async", "modification", "documentation", "defaultLibrary" },
-				tokenTypes = { "namespace", "type", "class", "enum", "interface", "struct",
-					"typeParameter", "parameter", "variable", "property", "enumMember", "event",
-					"function", "method", "macro", "keyword", "modifier", "comment", "string",
-					"number", "regexp", "operator", "decorator" }
-			},
-			signatureHelp = {
-				dynamicRegistration = false,
-				signatureInformation = {
-					activeParameterSupport = true,
-					documentationFormat = { "markdown", "plaintext" },
-					parameterInformation = {
-						labelOffsetSupport = true
-					}
-				}
-			},
-			synchronization = {
-				didSave = true,
-				dynamicRegistration = false,
-				willSave = true,
-				willSaveWaitUntil = true
-			},
-			typeDefinition = {
-				linkSupport = true
-			}
-		},
-		window = {
-			showDocument = {
-				support = true
-			},
-			showMessage = {
-				messageActionItem = {
-					additionalPropertiesSupport = false
-				}
-			},
-			workDoneProgress = true
-		},
-		workspace = {
-			applyEdit = true,
-			configuration = true,
-			didChangeWatchedFiles = {
-				dynamicRegistration = true,
-				relativePatternSupport = true
-			},
-			inlayHint = {
-				refreshSupport = true
-			},
-			semanticTokens = {
-				refreshSupport = true
-			},
-			symbol = {
-				dynamicRegistration = false,
-				symbolKind = {
-					valueSet = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-						20, 21, 22, 23, 24, 25, 26 }
-				}
-			},
-			workspaceEdit = {
-				resourceOperations = { "rename", "create", "delete" }
-			},
-			workspaceFolders = true
-		}
-	}
-})
-
-lsp.phpactor.setup {}
-lsp.cssls.setup {}
-lsp.html.setup {}
-lsp.bashls.setup {}
-
--- Dart
--- lsp.dartls.setup {}
-
--- Mysql
-lsp.sqlls.setup {
-	cmd = { "typescript-language-server", "--stdio" }
-}

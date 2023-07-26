@@ -15,17 +15,21 @@ key('x', '<leader>/', [[:s/\%V]], opt)
 key({ 'n', 'x' }, 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 key({ 'n', 'x' }, 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 
+key('n', 'f', 'vf', {desc = "Move to next char"})
+key('n', 'F', 'vF', {desc = "Move to prev char"})
+
+key('n', 't', 'vf', {desc = "Move to before next char"})
+key('n', 'T', 'vT', {desc = "Move to before prev char"})
+
 -- Stuff
-key("n", "Y", "y$", opt)
 key("n", "J", "mzJ`z", opt)
+key("n", "Y", "y$", opt)
 key("n", "N", "Nzzzv", opt)
 key("n", "n", "nzzzv", opt)
 key('n', '<c-k>', ':m -2<CR>==', opt)
 key('n', '<c-j>', ':m +1<CR>==', opt)
--- key.keymap.set('i', '<c-k>', '<esc><cmd>m .-2<cr>==gi')
--- key.keymap.set('i', '<c-j>', '<esc><cmd>m .+1<cr>==gi')
-key('v', '<c-k>', ":m '<-2<CR>gv=gv", opt)
-key('v', '<c-j>', ":m '>+1<CR>gv=gv",opt)
+key('v', '<M-k>', ":m '<-2<CR>gv=gv", opt)
+key('v', '<M-j>', ":m '>+1<CR>gv=gv",opt)
 
 -- Add blank line without leaving normal mode
 key('n', '<leader>o', 'o<Esc>',opt)
@@ -42,7 +46,7 @@ key("v", "L", ">gv", opt)
 key("v", "H", "<gv", opt)
 
 -- Using ; to Command mode
-key("n", ";", ":", opt)
+key("n", ";", ":", {})
 
 -- Using jk as ESC
 key("t", "jk", "<C-\\><C-n>", opt)
@@ -56,12 +60,8 @@ key("n", "<F2>", "<C-\\><C-n>:ToggleTerm<CR>", opt)
 -- Search and replace word under the cursor
 key('n', '<leader>R', ':%s/\\<<C-r><C-w>\\>/<C-r><C-w>/gI<Left><Left><Left>',  { desc = 'Search and replace word under the cursor' })
 
--- Hop word
-key("n", "W", ":HopWord<CR>", opt)
-
 -- Carbon Now Sha
 key("v", "<F5>", ":CarbonNowSh<CR>", opt)
-
 
 key("n", "<Up>", "<C-u>", opt)
 key("n", "<Down>", "<C-d>", opt)

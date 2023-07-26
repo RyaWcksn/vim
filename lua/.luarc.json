@@ -1,6 +1,7 @@
 {
     "diagnostics.globals": [
-        "style"
+        "style",
+        "vim"
     ],
     "diagnostics.disable": [
         "undefined-field"
