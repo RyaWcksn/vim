@@ -15,11 +15,13 @@ key('x', '<leader>/', [[:s/\%V]], opt)
 key({ 'n', 'x' }, 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 key({ 'n', 'x' }, 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 
-key('n', 'f', 'vf', {desc = "Move to next char"})
-key('n', 'F', 'vF', {desc = "Move to prev char"})
-
-key('n', 't', 'vf', {desc = "Move to before next char"})
-key('n', 'T', 'vT', {desc = "Move to before prev char"})
+-- key('n', 'f', 'vf', { desc = "Move to next char" })
+-- key('n', 'F', 'vF', { desc = "Move to prev char" })
+-- 
+-- key('n', 't', 'vf', { desc = "Move to before next char" })
+-- key('n', 'T', 'vT', { desc = "Move to before prev char" })
+-- 
+key('n', 'W', 'vw', { desc = "Move to next word" })
 
 -- Stuff
 key("n", "J", "mzJ`z", opt)
@@ -29,11 +31,11 @@ key("n", "n", "nzzzv", opt)
 key('n', '<c-k>', ':m -2<CR>==', opt)
 key('n', '<c-j>', ':m +1<CR>==', opt)
 key('v', '<M-k>', ":m '<-2<CR>gv=gv", opt)
-key('v', '<M-j>', ":m '>+1<CR>gv=gv",opt)
+key('v', '<M-j>', ":m '>+1<CR>gv=gv", opt)
 
 -- Add blank line without leaving normal mode
-key('n', '<leader>o', 'o<Esc>',opt)
-key('n', '<leader>O', 'O<Esc>',opt)
+key('n', '<leader>o', 'o<Esc>', opt)
+key('n', '<leader>O', 'O<Esc>', opt)
 
 -- Delete word with backspace
 key('n', '<BS>', 'ge', opt)
@@ -50,7 +52,7 @@ key("n", ";", ":", {})
 
 -- Using jk as ESC
 key("t", "jk", "<C-\\><C-n>", opt)
-key("i", "jk", "<esc>", opt)
+key({ "i", "v" }, "jk", "<esc>", opt)
 
 -- Terminal Float
 key("t", "<F2>", "<C-\\><C-n>:ToggleTerm<CR>", opt)
@@ -58,7 +60,8 @@ key("i", "<F2>", "<C-\\><C-n>:ToggleTerm<CR>", opt)
 key("n", "<F2>", "<C-\\><C-n>:ToggleTerm<CR>", opt)
 
 -- Search and replace word under the cursor
-key('n', '<leader>R', ':%s/\\<<C-r><C-w>\\>/<C-r><C-w>/gI<Left><Left><Left>',  { desc = 'Search and replace word under the cursor' })
+key('n', '<leader>R', ':%s/\\<<C-r><C-w>\\>/<C-r><C-w>/gI<Left><Left><Left>',
+	{ desc = 'Search and replace word under the cursor' })
 
 -- Carbon Now Sha
 key("v", "<F5>", ":CarbonNowSh<CR>", opt)
