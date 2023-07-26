@@ -1,4 +1,4 @@
--- This file can be loaded by calling `lua require('plugins')` from your init.vimplinon
+-- This file can be loaded by calling `lua require('plugins')` from your init.vimplinonplini
 --
 --
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -21,6 +21,7 @@ require("lazy").setup({
 	{ 'rcarriga/nvim-notify' },
 	{
 		"williamboman/mason.nvim",
+		lazy = true,
 		config = function()
 			require('configs.mason')
 		end,
@@ -46,82 +47,35 @@ require("lazy").setup({
 
 	{
 		"williamboman/mason-lspconfig.nvim",
+		lazy = true,
 		cmd = { "LspInstall", "LspUninstall" },
 		dependencies = "mason.nvim",
 	},
 	{
 		'scalameta/nvim-metals',
 		config = function()
-			local api = vim.api
-			local metals = require("metals")
-			local metals_config = metals.bare_config()
-			metals_config.settings = {
-				showImplicitArguments = true,
-			}
-			metals_config.init_options.statusBarProvider = "on"
-			metals_config.capabilities = require("cmp_nvim_lsp").default_capabilities()
-			local dap = require("dap")
-			dap.configurations.scala = {
-				{
-					type = "scala",
-					request = "launch",
-					name = "RunOrTest",
-					metals = {
-						runtType = "runOrTestFile",
-					},
-				},
-				{
-					type = "scala",
-					request = "launch",
-					name = "Test Target",
-					metals = {
-						runtType = "testTarget",
-					},
-				},
-			}
-
-			metals_config.on_attach = function(client, bufnr)
-				metals.setup_dap()
-			end
-
-			vim.keymap.set("n", "<leader>lmc", function()
-				require("telescope").extensions.metals.commands()
-			end)
-
-			local nvim_metals_group = api.nvim_create_augroup("metals", { clear = true })
-			api.nvim_create_autocmd("FileType", {
-				pattern = { "scala", "sbt", "java" },
-				callback = function()
-					metals.initialize_or_attach(metals_config)
-				end,
-				group = nvim_metals_group,
-			})
+			require('configs.metals')
 		end,
 		dependencies = { "nvim-lua/plenary.nvim" },
 	},
 	-- Lsp
 	{
 		'neovim/nvim-lspconfig',
+		lazy = true,
 		config = function()
 			require('configs.lspconfig')
 		end,
 	},
 
 	-- Flutter
-	--
 	{
 		"akinsho/flutter-tools.nvim",
+		ft = "dart",
 		dependencies = { "nvim-lua/plenary.nvim" },
 		config = function()
 			require("configs.flutter")
 		end,
 	},
-	--  {
-	-- 	dependencies = { "tjdevries/colorbuddy.nvim", branch = "dev" },,
-	-- 	config = function()
-	-- 		require('configs.noirbuddy')
-	-- 	end
-	-- },
 	{ 'nyoom-engineering/oxocarbon.nvim' },
 
 
@@ -133,11 +87,6 @@ require("lazy").setup({
 		cmd = "WhichKey",
 		event = "VeryLazy",
 	},
-	-- Lazy loading:
-	-- Load on specific commands
-	{ 'tpope/vim-dispatch',              opt = true, cmd = { 'Dispatch', 'Make', 'Focus', 'Start' }, },
-
-	-- Post-install/update hook with neovim command
 	{
 		'nvim-treesitter/nvim-treesitter',
 		run = ':TSUpdate',
@@ -161,8 +110,6 @@ require("lazy").setup({
 	},
 	{ 'nvim-treesitter/playground' },
 
-	-- You can alias plugin names
-	{ 'dracula/vim',               as = 'dracula' },
 	{
 		'nvim-tree/nvim-tree.lua',
 		dependencies = 'nvim-tree/nvim-web-devicons',
@@ -252,7 +199,10 @@ require("lazy").setup({
 			require("configs.mason-dap")
 		end
 	},
-	{ 'leoluz/nvim-dap-go' },
+	{
+		'leoluz/nvim-dap-go',
+		ft = "go"
+	},
 
 	{
 		"olexsmir/gopher.nvim",
@@ -262,7 +212,8 @@ require("lazy").setup({
 		},
 		config = function()
 			require("configs.gopher")
-		end
+		end,
+		ft = "go"
 	},
 	{
 		"akinsho/toggleterm.nvim",
@@ -278,5 +229,17 @@ require("lazy").setup({
 		config = function()
 			require("configs.autopairs")
 		end,
+	},
+	{
+		"nvim-neorg/neorg",
+		-- lazy-load on filetype
+		ft = "norg",
+		-- options for neorg. This will automatically call `require("neorg").setup(opts)`
+		opts = {
+			load = {
+				["core.defaults"] = {},
+			},
+		},
+		dependencies = { { "nvim-lua/plenary.nvim" }, { "nvim-neorg/neorg-telescope" } },
 	},
 })
