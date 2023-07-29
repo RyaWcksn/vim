@@ -8,12 +8,36 @@ local has_words_before = function()
 	return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
 end
 
+local function border(hl_name)
+	return {
+		{ "╭", hl_name },
+		{ "─", hl_name },
+		{ "╮", hl_name },
+		{ "│", hl_name },
+		{ "╯", hl_name },
+		{ "─", hl_name },
+		{ "╰", hl_name },
+		{ "│", hl_name },
+	}
+end
+
+
+local cmp_window = require "cmp.config.window"
+local cmp_mapping = require "cmp.config.mapping"
 
 cmp.setup({
 	snippet = {
 		expand = function(args)
 			luasnip.lsp_expand(args.body)
 		end,
+	},
+
+	formatting = {
+		fields = { "abbr", "kind", "menu" },
+	},
+	window = {
+		completion = cmp_window.bordered(),
+		documentation = cmp_window.bordered()
 	},
 
 	mapping = cmp.mapping.preset.insert {
