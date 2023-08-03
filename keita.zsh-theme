@@ -8,7 +8,7 @@ prompt_virtualenv() {
   fi
 }
 
-PROMPT="%{$fg[white]%}%c >%{$reset_color%} "
+PROMPT="%{$fg[white]%}%c (%m) >%{$reset_color%} "
 RPROMPT='%{$fg[$NCOLOR]%} $(git_prompt_info)%{$reset_color%}$(prompt_virtualenv)' 
 
 ZSH_THEME_GIT_PROMPT_PREFIX=""
