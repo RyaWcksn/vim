@@ -17,11 +17,17 @@ key({ 'n', 'x' }, 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true
 
 -- key('n', 'f', 'vf', { desc = "Move to next char" })
 -- key('n', 'F', 'vF', { desc = "Move to prev char" })
--- 
+--
 -- key('n', 't', 'vf', { desc = "Move to before next char" })
 -- key('n', 'T', 'vT', { desc = "Move to before prev char" })
--- 
-key('n', 'W', 'vw', { desc = "Move to next word" })
+--
+
+-- Function to exit visual mode
+local function exit_visual_mode()
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true)
+end
+
+key('n', '<bs>', '<c-^>\'”zz', { desc = "Prev buffer" })
 
 -- Stuff
 key("n", "J", "mzJ`z", opt)
@@ -38,7 +44,6 @@ key('n', '<leader>o', 'o<Esc>', opt)
 key('n', '<leader>O', 'O<Esc>', opt)
 
 -- Delete word with backspace
-key('n', '<BS>', 'ge', opt)
 key('n', '<C-BS>', 'a<C-w>', opt)
 
 -- Indent
