@@ -96,9 +96,9 @@ wk.setup {
 wk.register({
 	b = {
 		name = "+Buffer",
-		b = {":Telescope buffers<CR>", "Open Buffers"},
-		d = {":bd<CR>", "Delete This Buffer"},
-		a = {":w <bar> %bd <bar> e# <bar> bd# <CR>", "Delete All But This Buffer"},
+		b = { ":Telescope buffers<CR>", "Open Buffers" },
+		d = { ":bd<CR>", "Delete This Buffer" },
+		a = { ":w <bar> %bd <bar> e# <bar> bd# <CR>", "Delete All But This Buffer" },
 	},
 	w = {
 		name = "+Window",
@@ -168,6 +168,7 @@ wk.register({
 		l = { ':DBUILastQueryInfo<CR>', 'Show Last Query Info in DBUI' }
 	},
 	K = { ":lua vim.lsp.buf.hover()<CR>", "Hover" },
+	[";"] = { ":", "Command" }
 }, { prefix = "<leader>", mode = "n", noremap = true })
 
 wk.register({

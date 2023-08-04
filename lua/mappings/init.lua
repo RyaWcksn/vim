@@ -22,6 +22,10 @@ key({ 'n', 'x' }, 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true
 -- key('n', 'T', 'vT', { desc = "Move to before prev char" })
 --
 
+key({'n'}, '<F3>', "zc", {desc = "Fold"})
+key({'n'}, '<F4>', "zR", {desc = "Unfold all"})
+key({'n'}, '<F5>', "zo", {desc = "Unfold"})
+
 -- Function to exit visual mode
 local function exit_visual_mode()
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true)
@@ -53,7 +57,7 @@ key("v", "L", ">gv", opt)
 key("v", "H", "<gv", opt)
 
 -- Using ; to Command mode
-key("n", ";", ":", {})
+-- key("n", ";", ":", {})
 
 -- Using jk as ESC
 key("t", "jk", "<C-\\><C-n>", opt)
