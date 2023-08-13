@@ -110,7 +110,7 @@ wk.register({
 		J = { ":res -5<CR>", "Resize Down" },
 		H = { ":vertical res -5<CR>", "Resize Left" },
 		L = { ":vertical res +5<CR>", "Resize Right" },
-		q = { ":q!<CR>", "Kill Window" },
+		q = { ":q<CR>", "Kill Window" },
 		["<Leader>"] = {
 			name = "+Split",
 			k = { ":vs<CR>", "Split Vertically" },
