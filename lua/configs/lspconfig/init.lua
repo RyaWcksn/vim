@@ -1,5 +1,6 @@
 local lsp = require('lspconfig')
 local notify = require 'notify'
+local intelephense = require 'configs.lspconfig.languages.intelephense'
 
 vim.o.updatetime = 250
 vim.cmd [[autocmd! CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false})]]
@@ -138,6 +139,7 @@ local servers = {
 	tsserver = require('configs.lspconfig.languages.tsserver').tsserver(capabilities, on_attach),
 	tailwindcss = require('configs.lspconfig.languages.tailwindcss').tailwind(capabilities, on_attach),
 	lua_ls = require('configs.lspconfig.languages.lua-ls').lua_ls(capabilities, on_attach),
+	intelephense = require('configs.lspconfig.languages.intelephense').intelephense(capabilities, on_attach)
 }
 
 for server, cfg in pairs(servers) do
