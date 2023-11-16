@@ -22,13 +22,13 @@ key({ 'n', 'x' }, 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true
 -- key('n', 'T', 'vT', { desc = "Move to before prev char" })
 --
 
-key({'n'}, '<F3>', "zc", {desc = "Fold"})
-key({'n'}, '<F4>', "zR", {desc = "Unfold all"})
-key({'n'}, '<F5>', "zo", {desc = "Unfold"})
+key({ 'n' }, '<F3>', "zc", { desc = "Fold" })
+key({ 'n' }, '<F4>', "zR", { desc = "Unfold all" })
+key({ 'n' }, '<F5>', "zo", { desc = "Unfold" })
 
 -- Function to exit visual mode
 local function exit_visual_mode()
-    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true)
+	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true)
 end
 
 key('n', '<bs>', '<c-^>\'”zz', { desc = "Prev buffer" })
@@ -82,6 +82,7 @@ key("n", "<Down>", "<C-d>", opt)
 key("n", "K", ":lua vim.lsp.buf.hover()<CR>", opt)
 key('n', '[', ":lua vim.diagnostic.goto_prev()<CR>", opt)
 key('n', ']', ":lua vim.diagnostic.goto_next()<CR>", opt)
+key('i', '<c-s>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opt)
 
 -- key("n", "hh", "zc", opt)
 -- key("n", "ll", "zo", opt)

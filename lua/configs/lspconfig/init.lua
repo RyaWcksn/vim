@@ -3,7 +3,8 @@ local notify = require 'notify'
 local intelephense = require 'configs.lspconfig.languages.intelephense'
 
 vim.o.updatetime = 250
-vim.cmd [[autocmd! CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false})]]
+vim.cmd [[autocmd! CursorHold * lua vim.diagnostic.open_float(nil, {focus=false})]]
+vim.cmd [[autocmd! CursorHoldI * lua vim.lsp.buf.signature_help(nil, {focus=false})]]
 
 vim.lsp.set_log_level("debug")
 
@@ -24,6 +25,29 @@ vim.lsp.handlers['window/showMessage'] = function(_, result, ctx)
 		end,
 	})
 end
+
+vim.lsp.handlers["textDocument/definition"] = function(_, result, ctx)
+        if not result or vim.tbl_isempty(result) then
+            return vim.api.nvim_echo({ { "Lsp: Could not find definition" } }, false, {})
+        end
+        local client = vim.lsp.get_client_by_id(ctx.client_id)
+
+        if vim.tbl_islist(result) then
+            local results = vim.lsp.util.locations_to_items(result, client.offset_encoding)
+            local lnum, filename = results[1].lnum, results[1].filename
+            for _, val in pairs(results) do
+                if val.lnum ~= lnum or val.filename ~= filename then
+                    return require("telescope.builtin").lsp_definitions()
+                end
+            end
+            vim.lsp.util.jump_to_location(result[1], client.offset_encoding, false)
+        else
+            vim.lsp.util.jump_to_location(result, client.offset_encoding, false)
+        end
+    end
+    vim.lsp.handlers["textDocument/references"] = function(_, _, _)
+        require("telescope.builtin").lsp_references()
+    end
 
 
 
