@@ -122,7 +122,7 @@ require("lualine").setup({
 
 	sections = {
 		lualine_a = {},
-		lualine_b = { module.mode, module.branch, module.lsp },
+		lualine_b = { module.mode, module.branch, module.lsp, "filename"},
 		lualine_c = {},
 		lualine_x = {},
 		lualine_y = { module.diagnostic, module.diff },

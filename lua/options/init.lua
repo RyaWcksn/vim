@@ -10,13 +10,13 @@ g.do_filetype_lua = 1
 vim.notify = require("notify")
 
 local function status_line()
-	local file_name = vim.api.nvim_eval_statusline("%f", {}).str
+	local path = string.gsub(vim.api.nvim_buf_get_name(0), vim.loop.cwd(), '')
 
-	file_name = file_name:gsub('/', ' > ')
+	path = path:gsub('/', ' > ')
 
 	return string.format(
 		" %s ",
-		file_name
+		path
 	)
 end
 
