@@ -46,11 +46,29 @@ local on_attach = function(client, bufnr)
 	vim.cmd [[autocmd! CursorHold * lua vim.diagnostic.open_float(nil, {focus=false})]]
 
 	if client.server_capabilities.inlayHintProvider then
-		vim.lsp.inlay_hint.enable()
+		vim.lsp.inlay_hint.enable(bufnr, true)
+
+		local group = vim.api.nvim_create_augroup("ShowInlayHint", { clear = true })
+		vim.api.nvim_create_autocmd("InsertEnter",
+			{
+				group = group,
+				callback = function()
+					vim.lsp.inlay_hint.enable(bufnr, true)
+				end,
+			})
+		vim.api.nvim_create_autocmd("InsertLeave",
+			{
+				group = group,
+				callback = function()
+					vim.lsp.inlay_hint.enable(bufnr, false)
+				end,
+			})
 	end
+
 	if client.server_capabilities.codeLensProvider then
 		vim.lsp.codelens.refresh()
 	end
+
 	if client.server_capabilities.documentHightlightProvider then
 		vim.api.nvim_exec(
 			[[
@@ -132,3 +150,26 @@ local servers = {
 for server, cfg in pairs(servers) do
 	lsp[server].setup(cfg)
 end
+
+local signature_result = {}
+
+-- Function to handle the signature result
+local function on_signature(err, result, ctx, config)
+	if err then
+		print("Error getting signature: ", err)
+		return
+	end
+
+	-- Store the signature information in the variable
+	signature_result = result
+
+	-- Print the signature information (you can customize this part)
+	print("Signature result: ", vim.inspect(result))
+end
+
+-- Function to trigger the signature request
+function get_signature()
+	vim.lsp.buf_request(0, 'textDocument/signatureHelp', vim.lsp.util.make_position_params(), on_signature)
+end
+
+print(get_signature())

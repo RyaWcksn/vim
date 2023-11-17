@@ -4,10 +4,115 @@ require('dap.ext.vscode').load_launchjs()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 local extendedClientCapabilities = jdtls.extendedClientCapabilities
 extendedClientCapabilities.resolveAdditionalTextEditsSupport = true
+
+local on_attach = function(client, bufnr)
+	--print(vim.inspect(client.server_capabilities))
+	vim.o.updatetime = 250
+	vim.cmd [[autocmd! CursorHold * lua vim.diagnostic.open_float(nil, {focus=false})]]
+
+	if client.server_capabilities.inlayHintProvider then
+		vim.lsp.inlay_hint.enable(bufnr, true)
+
+		local group = vim.api.nvim_create_augroup("ShowInlayHint", { clear = true })
+		vim.api.nvim_create_autocmd("InsertEnter",
+			{
+				group = group,
+				callback = function()
+					vim.lsp.inlay_hint.enable(bufnr, true)
+				end,
+			})
+		vim.api.nvim_create_autocmd("InsertLeave",
+			{
+				group = group,
+				callback = function()
+					vim.lsp.inlay_hint.enable(bufnr, false)
+				end,
+			})
+	end
+
+	if client.server_capabilities.codeLensProvider then
+		vim.lsp.codelens.refresh()
+	end
+
+	if client.server_capabilities.documentHightlightProvider then
+		vim.api.nvim_exec(
+			[[
+				hi LspReferenceRead cterm=bold ctermbg=red guibg=#282f45
+				hi LspReferenceText cterm=bold ctermbg=red guibg=#282f45
+				hi LspReferenceWrite cterm=bold ctermbg=red guibg=#282f45
+				augroup lsp_document_highlight
+				autocmd! * <buffer>
+				autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
+				autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
+				augroup END
+			]],
+			false
+		)
+	end
+	if client.server_capabilities.signatureHelpProvider then
+		vim.cmd [[autocmd! CursorHoldI * lua vim.lsp.buf.signature_help(nil, {focus=false})]]
+		vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(
+			vim.lsp.handlers.signature_help,
+			{
+				border = 'rounded',
+				close_events = { "CursorMoved", "BufHidden", "InsertCharPre" },
+			}
+		)
+	end
+
+	vim.lsp.handlers["textDocument/definition"] = function(_, result, ctx)
+		if not result or vim.tbl_isempty(result) then
+			return vim.api.nvim_echo({ { "Lsp: Could not find definition" } }, false, {})
+		end
+
+		if vim.tbl_islist(result) then
+			local results = vim.lsp.util.locations_to_items(result, client.offset_encoding)
+			local lnum, filename = results[1].lnum, results[1].filename
+			for _, val in pairs(results) do
+				if val.lnum ~= lnum or val.filename ~= filename then
+					return require("telescope.builtin").lsp_definitions()
+				end
+			end
+			vim.lsp.util.jump_to_location(result[1], client.offset_encoding, false)
+		else
+			vim.lsp.util.jump_to_location(result, client.offset_encoding, false)
+		end
+	end
+
+	vim.lsp.handlers['window/showMessage'] = function(_, result, ctx)
+		local lvl = ({
+			'ERROR',
+			'WARN',
+			'INFO',
+			'DEBUG',
+		})[result.type]
+		notify({ result.message }, lvl, {
+			title = 'LSP | ' .. client.name,
+			timeout = 10000,
+			keep = function()
+				return lvl == 'ERROR' or lvl == 'WARN'
+			end,
+		})
+	end
+
+	vim.lsp.handlers["textDocument/references"] = function(_, _, _)
+		require("telescope.builtin").lsp_references()
+	end
+	local _, _ = pcall(vim.lsp.codelens.refresh)
+	require('jdtls').setup_dap({ hotcodereplace = 'auto' })
+	local status_ok, jdtls_dap = pcall(require, "jdtls.dap")
+	if status_ok then
+		jdtls_dap.setup_dap_main_class_configs()
+	end
+
+	vim.notify('lsp server (jdtls) attached')
+end
+
 local config = {
 	cmd = { 'jdtls' },
 	root_dir = vim.fs.dirname(vim.fs.find({ 'gradlew', '.git', 'mvnw' }, { upward = true })[1]),
 	single_file_support = true,
+	on_attach = on_attach,
 	settings = {
 		flags = {
 			allow_incremental_sync = true,
@@ -74,15 +179,6 @@ local config = {
 	},
 	extendedClientCapabilities = extendedClientCapabilities
 }
-config['on_attach'] = function(client, bufnr)
-	local _, _ = pcall(vim.lsp.codelens.refresh)
-	require('jdtls').setup_dap({ hotcodereplace = 'auto' })
-	require("lsp-config").on_attach(client, bufnr)
-	local status_ok, jdtls_dap = pcall(require, "jdtls.dap")
-	if status_ok then
-		jdtls_dap.setup_dap_main_class_configs()
-	end
 
-	vim.notify('lsp server (jdtls) attached')
-end
+
 jdtls.start_or_attach(config)
