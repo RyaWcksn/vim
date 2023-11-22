@@ -33,13 +33,17 @@ require("lazy").setup({
 		ft = "java"
 	},
 
-	-- RPC
 	{
-		'andweeb/presence.nvim',
-		config = function()
-			require('configs.presence')
-		end
+		"APZelos/blamer.nvim"
 	},
+
+	-- RPC
+	-- {
+	-- 	'andweeb/presence.nvim',
+	-- 	config = function()
+	-- 		require('configs.presence')
+	-- 	end
+	-- },
 
 	-- Database
 	{ 'tpope/vim-dadbod' },

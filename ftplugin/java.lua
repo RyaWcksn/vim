@@ -5,6 +5,47 @@ capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 local extendedClientCapabilities = jdtls.extendedClientCapabilities
 extendedClientCapabilities.resolveAdditionalTextEditsSupport = true
 
+
+local home = os.getenv("HOME")
+local jdtls_path = home .. "/Documents/jdtls"
+local lombok_path = home .. "/Documents/jdtls/lombok.jar"
+local jar_path = vim.fn.glob(jdtls_path .. '/plugins/org.eclipse.equinox.launcher_*.jar')
+
+
+local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')
+local workspace_dir = vim.fn.expand('$HOME/Sandbox/workspace/') .. project_name
+os.execute("mkdir -p " .. workspace_dir)
+
+local function get_config_dir()
+	if vim.fn.has('linux') == 1 then
+		return jdtls_path .. '/config_linux'
+	elseif vim.fn.has('mac') == 1 then
+		return jdtls_path .. '/config_mac'
+	else
+		return jdtls_path .. '/config_win'
+	end
+end
+
+local jdlts_cmd = {
+	'java',
+	'-Declipse.application=org.eclipse.jdt.ls.core.id1',
+	'-Dosgi.bundles.defaultStartLevel=4',
+	'-Declipse.product=org.eclipse.jdt.ls.core.product',
+	'-Dlog.protocol=true',
+	'-Dlog.level=ALL',
+	'-Xmx1g',
+	"-javaagent:" .. lombok_path,
+	'--add-modules=ALL-SYSTEM',
+	'--add-opens', 'java.base/java.util=ALL-UNNAMED',
+	'--add-opens', 'java.base/java.lang=ALL-UNNAMED',
+
+	'-jar', jar_path,
+	'-configuration', get_config_dir(),
+	'-data', workspace_dir,
+}
+
+
+
 local on_attach = function(client, bufnr)
 	--print(vim.inspect(client.server_capabilities))
 	vim.o.updatetime = 250
@@ -60,25 +101,6 @@ local on_attach = function(client, bufnr)
 		)
 	end
 
-	vim.lsp.handlers["textDocument/definition"] = function(_, result, ctx)
-		if not result or vim.tbl_isempty(result) then
-			return vim.api.nvim_echo({ { "Lsp: Could not find definition" } }, false, {})
-		end
-
-		if vim.tbl_islist(result) then
-			local results = vim.lsp.util.locations_to_items(result, client.offset_encoding)
-			local lnum, filename = results[1].lnum, results[1].filename
-			for _, val in pairs(results) do
-				if val.lnum ~= lnum or val.filename ~= filename then
-					return require("telescope.builtin").lsp_definitions()
-				end
-			end
-			vim.lsp.util.jump_to_location(result[1], client.offset_encoding, false)
-		else
-			vim.lsp.util.jump_to_location(result, client.offset_encoding, false)
-		end
-	end
-
 	vim.lsp.handlers['window/showMessage'] = function(_, result, ctx)
 		local lvl = ({
 			'ERROR',
@@ -109,7 +131,8 @@ local on_attach = function(client, bufnr)
 end
 
 local config = {
-	cmd = { 'jdtls' },
+	-- cmd = { 'jdtls' },
+	cmd = jdlts_cmd,
 	root_dir = vim.fs.dirname(vim.fs.find({ 'gradlew', '.git', 'mvnw' }, { upward = true })[1]),
 	single_file_support = true,
 	on_attach = on_attach,
@@ -151,9 +174,9 @@ local config = {
 	},
 	completion = {
 		favoriteStaticMembers = {
-			-- "org.hamcrest.MatcherAssert.assertThat",
-			-- "org.hamcrest.Matchers.*",
-			-- "org.hamcrest.CoreMatchers.*",
+			"org.hamcrest.MatcherAssert.assertThat",
+			"org.hamcrest.Matchers.*",
+			"org.hamcrest.CoreMatchers.*",
 			"org.junit.jupiter.api.Assertions.*",
 			"java.util.Objects.requireNonNull",
 			"java.util.Objects.requireNonNullElse",

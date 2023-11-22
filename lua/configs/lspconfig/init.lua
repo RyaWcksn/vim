@@ -45,25 +45,25 @@ local on_attach = function(client, bufnr)
 	vim.o.updatetime = 250
 	vim.cmd [[autocmd! CursorHold * lua vim.diagnostic.open_float(nil, {focus=false})]]
 
-	if client.server_capabilities.inlayHintProvider then
-		vim.lsp.inlay_hint.enable(bufnr, true)
+	--if client.server_capabilities.inlayHintProvider then
+	--	vim.lsp.inlay_hint.enable(bufnr, true)
 
-		local group = vim.api.nvim_create_augroup("ShowInlayHint", { clear = true })
-		vim.api.nvim_create_autocmd("InsertEnter",
-			{
-				group = group,
-				callback = function()
-					vim.lsp.inlay_hint.enable(bufnr, true)
-				end,
-			})
-		vim.api.nvim_create_autocmd("InsertLeave",
-			{
-				group = group,
-				callback = function()
-					vim.lsp.inlay_hint.enable(bufnr, false)
-				end,
-			})
-	end
+	--	local group = vim.api.nvim_create_augroup("ShowInlayHint", { clear = true })
+	--	vim.api.nvim_create_autocmd("InsertEnter",
+	--		{
+	--			group = group,
+	--			callback = function()
+	--				vim.lsp.inlay_hint.enable(bufnr, true)
+	--			end,
+	--		})
+	--	vim.api.nvim_create_autocmd("InsertLeave",
+	--		{
+	--			group = group,
+	--			callback = function()
+	--				vim.lsp.inlay_hint.enable(bufnr, false)
+	--			end,
+	--		})
+	--end
 
 	if client.server_capabilities.codeLensProvider then
 		vim.lsp.codelens.refresh()
@@ -84,16 +84,16 @@ local on_attach = function(client, bufnr)
 			false
 		)
 	end
-	if client.server_capabilities.signatureHelpProvider then
-		vim.cmd [[autocmd! CursorHoldI * lua vim.lsp.buf.signature_help(nil, {focus=false})]]
-		vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(
-			vim.lsp.handlers.signature_help,
-			{
-				border = 'rounded',
-				close_events = { "CursorMoved", "BufHidden", "InsertCharPre" },
-			}
-		)
-	end
+	-- if client.server_capabilities.signatureHelpProvider then
+	-- 	vim.cmd [[autocmd! CursorHoldI * lua vim.lsp.buf.signature_help(nil, {focus=false})]]
+	-- 	vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(
+	-- 		vim.lsp.handlers.signature_help,
+	-- 		{
+	-- 			border = 'rounded',
+	-- 			close_events = { "CursorMoved", "BufHidden", "InsertCharPre" },
+	-- 		}
+	-- 	)
+	-- end
 
 	vim.lsp.handlers["textDocument/definition"] = function(_, result, ctx)
 		if not result or vim.tbl_isempty(result) then
@@ -114,25 +114,6 @@ local on_attach = function(client, bufnr)
 		end
 	end
 
-	vim.lsp.handlers['window/showMessage'] = function(_, result, ctx)
-		local lvl = ({
-			'ERROR',
-			'WARN',
-			'INFO',
-			'DEBUG',
-		})[result.type]
-		notify({ result.message }, lvl, {
-			title = 'LSP | ' .. client.name,
-			timeout = 10000,
-			keep = function()
-				return lvl == 'ERROR' or lvl == 'WARN'
-			end,
-		})
-	end
-
-	vim.lsp.handlers["textDocument/references"] = function(_, _, _)
-		require("telescope.builtin").lsp_references()
-	end
 end
 
 local servers = {
@@ -145,31 +126,9 @@ local servers = {
 	lua_ls = require('configs.lspconfig.languages.lua-ls').lua_ls(capabilities, on_attach),
 	intelephense = require('configs.lspconfig.languages.intelephense').intelephense(capabilities, on_attach),
 	texlab = require('configs.lspconfig.languages.texlab').texlab(capabilities, on_attach),
+	kotlin_language_server = require('configs.lspconfig.languages.kotlin').kotlin(capabilities, on_attach),
 }
 
 for server, cfg in pairs(servers) do
 	lsp[server].setup(cfg)
 end
-
-local signature_result = {}
-
--- Function to handle the signature result
-local function on_signature(err, result, ctx, config)
-	if err then
-		print("Error getting signature: ", err)
-		return
-	end
-
-	-- Store the signature information in the variable
-	signature_result = result
-
-	-- Print the signature information (you can customize this part)
-	print("Signature result: ", vim.inspect(result))
-end
-
--- Function to trigger the signature request
-function get_signature()
-	vim.lsp.buf_request(0, 'textDocument/signatureHelp', vim.lsp.util.make_position_params(), on_signature)
-end
-
-print(get_signature())

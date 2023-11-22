@@ -12,6 +12,11 @@ colors = {
 	red      = '#ec5f67',
 }
 
+local function get_file_extension()
+	local file_name = vim.fn.expand('%:t')
+	local file_extension = vim.fn.fnamemodify(file_name, ':e')
+	return file_extension
+end
 
 module = {
 	lsp = {
@@ -102,7 +107,27 @@ module = {
 			return { fg = mode_color[vim.fn.mode()], bg = colors.bg }
 		end
 	},
+	version = {
+		function()
+			local lang = get_file_extension()
+			local version
+			if lang == "go" then
+				local handle = io.popen('go version')
+				local result = handle:read('*a')
+				handle:close()
+				version = string.match(result, 'go(%S+)')
+			elseif lang == "ts" or lang == "js" then
+				version = os.execute("node -v")
+			elseif lang == "py" then
+				version = os.execute("python3 --version")
+			end
+
+			return lang .. version
+		end,
+		color = { fg = '#ffffff', bg = '#262626' },
+	}
 }
+
 
 
 require("lualine").setup({
@@ -122,7 +147,7 @@ require("lualine").setup({
 
 	sections = {
 		lualine_a = {},
-		lualine_b = { module.mode, module.branch, module.lsp, "filename"},
+		lualine_b = { module.mode, module.branch, module.lsp, "filename" },
 		lualine_c = {},
 		lualine_x = {},
 		lualine_y = { module.diagnostic, module.diff },
