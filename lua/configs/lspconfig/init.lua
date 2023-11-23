@@ -41,34 +41,29 @@ vim.diagnostic.config(config)
 
 
 local on_attach = function(client, bufnr)
-	--print(vim.inspect(client.server_capabilities))
 	vim.o.updatetime = 250
-	vim.cmd [[autocmd! CursorHold * lua vim.diagnostic.open_float(nil, {focus=false})]]
-
-	--if client.server_capabilities.inlayHintProvider then
-	--	vim.lsp.inlay_hint.enable(bufnr, true)
-
-	--	local group = vim.api.nvim_create_augroup("ShowInlayHint", { clear = true })
-	--	vim.api.nvim_create_autocmd("InsertEnter",
-	--		{
-	--			group = group,
-	--			callback = function()
-	--				vim.lsp.inlay_hint.enable(bufnr, true)
-	--			end,
-	--		})
-	--	vim.api.nvim_create_autocmd("InsertLeave",
-	--		{
-	--			group = group,
-	--			callback = function()
-	--				vim.lsp.inlay_hint.enable(bufnr, false)
-	--			end,
-	--		})
-	--end
-
+	vim.api.nvim_create_autocmd("CursorHold", {
+		buffer = bufnr,
+		callback = function()
+			local opts = {
+				focusable = false,
+				close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
+				border = 'rounded',
+				source = 'always',
+				prefix = ' ',
+				scope = 'cursor',
+			}
+			vim.diagnostic.open_float(nil, opts)
+		end
+	})
 	if client.server_capabilities.codeLensProvider then
-		vim.lsp.codelens.refresh()
+		vim.api.nvim_create_autocmd("BufEnter", {
+			buffer = bufnr,
+			callback = function()
+				vim.lsp.codelens.refresh()
+			end
+		})
 	end
-
 	if client.server_capabilities.documentHightlightProvider then
 		vim.api.nvim_exec(
 			[[
@@ -84,17 +79,23 @@ local on_attach = function(client, bufnr)
 			false
 		)
 	end
-	-- if client.server_capabilities.signatureHelpProvider then
-	-- 	vim.cmd [[autocmd! CursorHoldI * lua vim.lsp.buf.signature_help(nil, {focus=false})]]
-	-- 	vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(
-	-- 		vim.lsp.handlers.signature_help,
-	-- 		{
-	-- 			border = 'rounded',
-	-- 			close_events = { "CursorMoved", "BufHidden", "InsertCharPre" },
-	-- 		}
-	-- 	)
-	-- end
 
+	if client.server_capabilities.signatureHelpProvider then
+		vim.api.nvim_create_autocmd("CursorHoldI", {
+			buffer = bufnr,
+			callback = function()
+				local opts = {
+					focusable = false,
+					close_events = { "BufLeave", "CursorMovedI", "FocusLost" },
+					border = 'rounded',
+					source = 'always',
+					prefix = ' ',
+					scope = 'cursor',
+				}
+				vim.lsp.buf.signature_help(nil, opts)
+			end
+		})
+	end
 	vim.lsp.handlers["textDocument/definition"] = function(_, result, ctx)
 		if not result or vim.tbl_isempty(result) then
 			return vim.api.nvim_echo({ { "Lsp: Could not find definition" } }, false, {})
@@ -113,7 +114,49 @@ local on_attach = function(client, bufnr)
 			vim.lsp.util.jump_to_location(result, client.offset_encoding, false)
 		end
 	end
+	if client.server_capabilities.document_highlight then
+		vim.cmd [[
+		    hi! LspReferenceRead cterm=bold ctermbg=red guibg=LightYellow
+		    hi! LspReferenceText cterm=bold ctermbg=red guibg=LightYellow
+		    hi! LspReferenceWrite cterm=bold ctermbg=red guibg=LightYellow
+		]]
+		vim.api.nvim_create_augroup('lsp_document_highlight', {
+			clear = false
+		})
+		vim.api.nvim_clear_autocmds({
+			buffer = bufnr,
+			group = 'lsp_document_highlight',
+		})
+		vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+			group = 'lsp_document_highlight',
+			buffer = bufnr,
+			callback = vim.lsp.buf.document_highlight,
+		})
+		vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
+			group = 'lsp_document_highlight',
+			buffer = bufnr,
+			callback = vim.lsp.buf.clear_references,
+		})
+	end
+end
 
+
+
+local border = {
+	{ "🭽", "FloatBorder" },
+	{ "▔", "FloatBorder" },
+	{ "🭾", "FloatBorder" },
+	{ "▕", "FloatBorder" },
+	{ "🭿", "FloatBorder" },
+	{ "▁", "FloatBorder" },
+	{ "🭼", "FloatBorder" },
+	{ "▏", "FloatBorder" },
+}
+local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
+function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+	opts = opts or {}
+	opts.border = opts.border or border
+	return orig_util_open_floating_preview(contents, syntax, opts, ...)
 end
 
 local servers = {
