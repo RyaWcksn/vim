@@ -9,18 +9,6 @@ g.do_filetype_lua = 1
 
 vim.notify = require("notify")
 
-local function status_line()
-	local path = string.gsub(vim.api.nvim_buf_get_name(0), vim.loop.cwd(), '')
-
-	path = path:gsub('/', ' > ')
-
-	return string.format(
-		" %s ",
-		path
-	)
-end
-
-vim.opt.winbar = status_line()
 
 
 vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
