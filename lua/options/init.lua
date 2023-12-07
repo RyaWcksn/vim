@@ -13,8 +13,8 @@ vim.notify = require("notify")
 
 vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
 vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
-vim.opt.background = "dark" -- set this to dark or light
-vim.cmd("colorscheme oxocarbon")
+vim.opt.background = "light" -- set this to dark or light
+vim.cmd("colorscheme default")
 
 opt.hlsearch = false
 opt.undofile = true
@@ -23,7 +23,7 @@ opt.hidden = true
 opt.ignorecase = true
 opt.splitbelow = true
 opt.splitright = true
-opt.termguicolors = true
+opt.termguicolors = false
 opt.cul = true
 opt.mouse = "a"
 opt.signcolumn = "yes"
