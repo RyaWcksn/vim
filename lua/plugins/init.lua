@@ -32,6 +32,23 @@ require("lazy").setup({
 		"mfussenegger/nvim-jdtls",
 		ft = "java"
 	},
+	{
+		"simrat39/rust-tools.nvim",
+		ft = " rust"
+	},
+	{
+		"saecki/crates.nvim",
+		config = function()
+			require('configs.crates')
+		end,
+	},
+
+	{
+		"numToStr/Comment.nvim",
+		config = function()
+			require('configs.comment')
+		end,
+	},
 
 	{
 		"APZelos/blamer.nvim"
