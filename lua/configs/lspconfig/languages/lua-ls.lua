@@ -10,6 +10,7 @@ M.lua_ls = function(capabilities, on_attach)
 			vim.api.nvim_get_runtime_file("", true),
 		},
 
+		checkThirdParty = false,
 		maxPreload = 5000,
 		preloadFileSize = 10000,
 	}
@@ -18,11 +19,12 @@ M.lua_ls = function(capabilities, on_attach)
 		capabilities = capabilities,
 		on_attach = on_attach,
 		codeLens = { enabled = true },
-		root_dir = lsp.util.root_pattern(".luarc.json", ".luarc.jsonc", ".luacheckrc", ".stylua.toml", "stylua.toml", "selene.toml", "selene.yml", ".git"),
+		root_dir = lsp.util.root_pattern(".luarc.json", ".luarc.jsonc", ".luacheckrc", ".stylua.toml",
+			"stylua.toml", "selene.toml", "selene.yml", ".git"),
 		settings = {
 			Lua = {
 				hint = { enable = true },
-				telemetry = { enable = false },
+				elemetry = { enable = false },
 				runtime = {
 					version = "LuaJIT",
 					special = {
@@ -40,3 +42,4 @@ M.lua_ls = function(capabilities, on_attach)
 end
 
 return M
+

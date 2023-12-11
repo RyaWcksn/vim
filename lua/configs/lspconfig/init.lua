@@ -64,61 +64,59 @@ local on_attach = function(client, bufnr)
 			end
 		})
 	end
-	if client.server_capabilities.documentHightlightProvider then
-		vim.api.nvim_exec(
-			[[
-				hi LspReferenceRead cterm=bold ctermbg=red guibg=#282f45
-				hi LspReferenceText cterm=bold ctermbg=red guibg=#282f45
-				hi LspReferenceWrite cterm=bold ctermbg=red guibg=#282f45
-				augroup lsp_document_highlight
-				autocmd! * <buffer>
-				autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
-				autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-				augroup END
-			]],
-			false
-		)
-	end
 
-	if client.server_capabilities.signatureHelpProvider then
-		vim.api.nvim_create_autocmd("CursorHoldI", {
+	if client.server_capabilities.documentFormattingProvider then
+		vim.api.nvim_create_autocmd("BufWritePre", {
 			buffer = bufnr,
 			callback = function()
-				local opts = {
-					focusable = false,
-					close_events = { "BufLeave", "CursorMovedI", "FocusLost" },
-					border = 'rounded',
-					source = 'always',
-					prefix = ' ',
-					scope = 'cursor',
-				}
-				vim.lsp.buf.signature_help(nil, opts)
+				vim.lsp.buf.format()
 			end
 		})
 	end
-	vim.lsp.handlers["textDocument/definition"] = function(_, result, ctx)
-		if not result or vim.tbl_isempty(result) then
-			return vim.api.nvim_echo({ { "Lsp: Could not find definition" } }, false, {})
-		end
 
-		if vim.tbl_islist(result) then
-			local results = vim.lsp.util.locations_to_items(result, client.offset_encoding)
-			local lnum, filename = results[1].lnum, results[1].filename
-			for _, val in pairs(results) do
-				if val.lnum ~= lnum or val.filename ~= filename then
-					return require("telescope.builtin").lsp_definitions()
-				end
+	-- if client.server_capabilities.signatureHelpProvider then
+	-- 	vim.api.nvim_create_autocmd("CursorHoldI", {
+	-- 		buffer = bufnr,
+	-- 		callback = function()
+	-- 			local opts = {
+	-- 				focusable = false,
+	-- 				close_events = { "BufLeave", "CursorMovedI", "FocusLost" },
+	-- 				border = 'rounded',
+	-- 				source = 'always',
+	-- 				prefix = ' ',
+	-- 				scope = 'cursor',
+	-- 			}
+	-- 			vim.lsp.buf.signature_help(nil, opts)
+	-- 		end
+	-- 	})
+	-- end
+
+	if client.server_capabilities.definitionProvider then
+		vim.lsp.handlers["textDocument/definition"] = function(_, result, ctx)
+			if not result or vim.tbl_isempty(result) then
+				return vim.api.nvim_echo({ { "Lsp: Could not find definition" } }, false, {})
 			end
-			vim.lsp.util.jump_to_location(result[1], client.offset_encoding, false)
-		else
-			vim.lsp.util.jump_to_location(result, client.offset_encoding, false)
+
+			if vim.tbl_islist(result) then
+				local results = vim.lsp.util.locations_to_items(result, client.offset_encoding)
+				local lnum, filename = results[1].lnum, results[1].filename
+				for _, val in pairs(results) do
+					if val.lnum ~= lnum or val.filename ~= filename then
+						return require("telescope.builtin").lsp_definitions()
+					end
+				end
+				vim.lsp.util.jump_to_location(result[1], client.offset_encoding, false)
+			else
+				vim.lsp.util.jump_to_location(result, client.offset_encoding, false)
+			end
 		end
 	end
-	if client.server_capabilities.document_highlight then
+	if client.server_capabilities.documentHighlightProvider then
 		vim.cmd [[
-		    hi! LspReferenceRead cterm=bold ctermbg=red guibg=LightYellow
-		    hi! LspReferenceText cterm=bold ctermbg=red guibg=LightYellow
-		    hi! LspReferenceWrite cterm=bold ctermbg=red guibg=LightYellow
+		    hi! LspReferenceRead ctermbg=black ctermfg=white guibg=LightYellow
+		    hi! LspReferenceText ctermbg=black ctermfg=white guibg=LightYellow
+		    hi! LspReferenceWrite ctermbg=black ctermfg=white guibg=LightYellow
+
 		]]
 		vim.api.nvim_create_augroup('lsp_document_highlight', {
 			clear = false
@@ -163,7 +161,7 @@ local servers = {
 	gopls = require('configs.lspconfig.languages.gopls').gopls(capabilities, on_attach),
 	golangci_lint_ls = require('configs.lspconfig.languages.golang-ci').golangci(capabilities, on_attach),
 	pyright = require('configs.lspconfig.languages.pyright').pyright(capabilities, on_attach),
-	rust_analyzer = require('configs.lspconfig.languages.rust-analyzer').rustanalyzer(capabilities, on_attach),
+	--rust_analyzer = require('configs.lspconfig.languages.rust-analyzer').rust_analyzer(capabilities, on_attach),
 	tsserver = require('configs.lspconfig.languages.tsserver').tsserver(capabilities, on_attach),
 	tailwindcss = require('configs.lspconfig.languages.tailwindcss').tailwind(capabilities, on_attach),
 	lua_ls = require('configs.lspconfig.languages.lua-ls').lua_ls(capabilities, on_attach),
@@ -172,6 +170,8 @@ local servers = {
 	kotlin_language_server = require('configs.lspconfig.languages.kotlin').kotlin(capabilities, on_attach),
 	terraformls = require('configs.lspconfig.languages.terraformls').terraformls(capabilities, on_attach)
 }
+
+require('configs.lspconfig.languages.rust-analyzer').rust_tools(capabilities, on_attach)
 
 for server, cfg in pairs(servers) do
 	lsp[server].setup(cfg)

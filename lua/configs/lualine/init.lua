@@ -125,6 +125,11 @@ module = {
 			return lang .. version
 		end,
 		color = { fg = '#ffffff', bg = '#262626' },
+	},
+	path = {
+		'filename',
+		file_status = true, -- displays file status (readonly status, modified status)
+		path = 1 -- 0 = just filename, 1 = relative path, 2 = absolute path
 	}
 }
 
@@ -147,7 +152,7 @@ require("lualine").setup({
 
 	sections = {
 		lualine_a = {},
-		lualine_b = { module.mode, module.branch, module.lsp, "filename" },
+		lualine_b = { module.mode, module.branch, module.lsp, module.path },
 		lualine_c = {},
 		lualine_x = {},
 		lualine_y = { module.diagnostic, module.diff },
