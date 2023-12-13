@@ -26,7 +26,7 @@ key({ 'n' }, '<F3>', "zc", { desc = "Fold" })
 key({ 'n' }, '<F4>', "zR", { desc = "Unfold all" })
 key({ 'n' }, '<F5>', "zo", { desc = "Unfold" })
 
-key('n', "<F7>", "%s/\r/\r/g", { desc = "Remove carriage-enter" })
+key('n', "<F7>", "%s/\r//g", { desc = "Remove carriage-enter" })
 
 -- Function to exit visual mode
 local function exit_visual_mode()

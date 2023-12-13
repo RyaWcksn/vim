@@ -9,13 +9,11 @@ g.do_filetype_lua = 1
 
 vim.notify = require("notify")
 
-
-
 vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
 vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
 vim.opt.background = "light" -- set this to dark or light
 vim.cmd("colorscheme default")
-
+vim.api.nvim_set_option('fileformat', 'unix')
 opt.hlsearch = false
 opt.undofile = true
 opt.ruler = false

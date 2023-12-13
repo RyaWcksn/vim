@@ -97,8 +97,6 @@ require("lazy").setup({
 			require("configs.flutter")
 		end,
 	},
-	{ 'nyoom-engineering/oxocarbon.nvim' },
-
 
 	{
 		"folke/which-key.nvim",
@@ -140,14 +138,7 @@ require("lazy").setup({
 		end,
 		event = "User DirOpened",
 	},
-	{
-		'nvim-lualine/lualine.nvim',
-		dependencies = { 'nvim-tree/nvim-web-devicons', opt = true },
-		config = function()
-			require('configs.lualine')
-		end,
-		event = "VimEnter",
-	},
+
 	-- Telescope
 	{ 'nvim-lua/plenary.nvim' },
 	{
@@ -158,7 +149,6 @@ require("lazy").setup({
 		lazy = true,
 		cmd = "Telescope",
 	},
-	{ 'nvim-telescope/telescope-media-files.nvim' },
 	{ 'nvim-telescope/telescope-fzf-native.nvim', make = 'make' },
 
 	{
@@ -174,11 +164,11 @@ require("lazy").setup({
 			"cmp-path",
 		},
 	},
-	{ "hrsh7th/cmp-nvim-lsp",         lazy = true },
-	{ "saadparwaiz1/cmp_luasnip",     lazy = true },
-	{ "hrsh7th/cmp-buffer",           lazy = true },
-	{ "hrsh7th/cmp-path",             lazy = true },
-	{ "rafamadriz/friendly-snippets", lazy = true },
+	{ "hrsh7th/cmp-nvim-lsp",                     lazy = true },
+	{ "saadparwaiz1/cmp_luasnip",                 lazy = true },
+	{ "hrsh7th/cmp-buffer",                       lazy = true },
+	{ "hrsh7th/cmp-path",                         lazy = true },
+	{ "rafamadriz/friendly-snippets",             lazy = true },
 	{
 		'L3MON4D3/LuaSnip',
 		config = function()
@@ -190,13 +180,6 @@ require("lazy").setup({
 		},
 	},
 
-	{
-		'TimUntersberger/neogit',
-		dependencies = 'nvim-lua/plenary.nvim',
-		config = function()
-			require('configs.neogit')
-		end
-	},
 	{
 		"klen/nvim-test",
 		config = function()
@@ -250,17 +233,5 @@ require("lazy").setup({
 		config = function()
 			require("configs.autopairs")
 		end,
-	},
-	{
-		"nvim-neorg/neorg",
-		-- lazy-load on filetype
-		ft = "norg",
-		-- options for neorg. This will automatically call `require("neorg").setup(opts)`
-		opts = {
-			load = {
-				["core.defaults"] = {},
-			},
-		},
-		dependencies = { { "nvim-lua/plenary.nvim" }, { "nvim-neorg/neorg-telescope" } },
 	},
 })

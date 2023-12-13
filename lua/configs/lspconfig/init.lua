@@ -1,6 +1,18 @@
-local lsp = require('lspconfig')
 local notify = require 'notify'
+local lsp = require('lspconfig')
 local capabilities = vim.lsp.protocol.make_client_capabilities()
+
+local border = {
+	{ "🭽", "FloatBorder" },
+	{ "▔", "FloatBorder" },
+	{ "🭾", "FloatBorder" },
+	{ "▕", "FloatBorder" },
+	{ "🭿", "FloatBorder" },
+	{ "▁", "FloatBorder" },
+	{ "🭼", "FloatBorder" },
+	{ "▏", "FloatBorder" },
+
+}
 
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 capabilities.textDocument.completion.completionItem.resolveSupport = {
@@ -74,22 +86,24 @@ local on_attach = function(client, bufnr)
 		})
 	end
 
-	-- if client.server_capabilities.signatureHelpProvider then
-	-- 	vim.api.nvim_create_autocmd("CursorHoldI", {
-	-- 		buffer = bufnr,
-	-- 		callback = function()
-	-- 			local opts = {
-	-- 				focusable = false,
-	-- 				close_events = { "BufLeave", "CursorMovedI", "FocusLost" },
-	-- 				border = 'rounded',
-	-- 				source = 'always',
-	-- 				prefix = ' ',
-	-- 				scope = 'cursor',
-	-- 			}
-	-- 			vim.lsp.buf.signature_help(nil, opts)
-	-- 		end
-	-- 	})
-	-- end
+	if client.server_capabilities.signatureHelpProvider then
+		vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help,
+			{ border = border })
+		-- 	vim.api.nvim_create_autocmd("CursorHoldI", {
+		-- 		buffer = bufnr,
+		-- 		callback = function()
+		-- 			local opts = {
+		-- 				focusable = false,
+		-- 				close_events = { "BufLeave", "CursorMovedI", "FocusLost" },
+		-- 				border = 'rounded',
+		-- 				source = 'always',
+		-- 				prefix = ' ',
+		-- 				scope = 'cursor',
+		-- 			}
+		-- 			vim.lsp.buf.signature_help(nil, opts)
+		-- 		end
+		-- 	})
+	end
 
 	if client.server_capabilities.definitionProvider then
 		vim.lsp.handlers["textDocument/definition"] = function(_, result, ctx)
