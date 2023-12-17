@@ -3,26 +3,26 @@ M = {}
 
 M.setup = function()
 	local modes = {
-		["n"] = "NORMAL",
-		["no"] = "NORMAL",
-		["v"] = "VISUAL",
-		["V"] = "VISUAL LINE",
-		[""] = "VISUAL BLOCK",
-		["s"] = "SELECT",
-		["S"] = "SELECT LINE",
-		[""] = "SELECT BLOCK",
-		["i"] = "INSERT",
-		["ic"] = "INSERT",
-		["R"] = "REPLACE",
-		["Rv"] = "VISUAL REPLACE",
-		["c"] = "COMMAND",
-		["cv"] = "VIM EX",
+		["n"] = "NO",
+		["no"] = "NO",
+		["v"] = "VI",
+		["V"] = "VI",
+		[""] = "VI",
+		["s"] = "SE",
+		["S"] = "SE",
+		[""] = "SE",
+		["i"] = "IN",
+		["ic"] = "IN",
+		["R"] = "RE",
+		["Rv"] = "VI",
+		["c"] = "CMD",
+		["cv"] = "VIX",
 		["ce"] = "EX",
 		["r"] = "PROMPT",
 		["rm"] = "MOAR",
 		["r?"] = "CONFIRM",
-		["!"] = "SHELL",
-		["t"] = "TERMINAL",
+		["!"] = "SH",
+		["t"] = "TERM",
 	}
 
 	local function mode()
@@ -90,16 +90,16 @@ M.setup = function()
 		local info = ""
 
 		if count["errors"] ~= 0 then
-			errors = " %#LspDiagnosticsSignError# " .. count["errors"]
+			errors = " %#LspDiagnosticsSignError#ERR " .. count["errors"]
 		end
 		if count["warnings"] ~= 0 then
-			warnings = " %#LspDiagnosticsSignWarning# " .. count["warnings"]
+			warnings = " %#LspDiagnosticsSignWarning#WARN " .. count["warnings"]
 		end
 		if count["hints"] ~= 0 then
-			hints = " %#LspDiagnosticsSignHint# " .. count["hints"]
+			hints = " %#LspDiagnosticsSignHint#HINT " .. count["hints"]
 		end
 		if count["info"] ~= 0 then
-			info = " %#LspDiagnosticsSignInformation# " .. count["info"]
+			info = " %#LspDiagnosticsSignInformation#INFO " .. count["info"]
 		end
 
 
