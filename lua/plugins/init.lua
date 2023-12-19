@@ -55,12 +55,12 @@ require("lazy").setup({
 	},
 
 	-- RPC
-	-- {
-	-- 	'andweeb/presence.nvim',
-	-- 	config = function()
-	-- 		require('configs.presence')
-	-- 	end
-	-- },
+	{
+		'andweeb/presence.nvim',
+		config = function()
+			require('configs.presence')
+		end
+	},
 
 	-- Database
 	{ 'tpope/vim-dadbod' },

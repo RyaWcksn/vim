@@ -1,4 +1,3 @@
-local notify = require 'notify'
 local lsp = require('lspconfig')
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 
@@ -183,7 +182,8 @@ local servers = {
 	texlab = require('configs.lspconfig.languages.texlab').texlab(capabilities, on_attach),
 	kotlin_language_server = require('configs.lspconfig.languages.kotlin').kotlin(capabilities, on_attach),
 	terraformls = require('configs.lspconfig.languages.terraformls').terraformls(capabilities, on_attach),
-	yamlls = require('configs.lspconfig.languages.yamlls').yamlls(capabilities, on_attach)
+	yamlls = require('configs.lspconfig.languages.yamlls').yamlls(capabilities, on_attach),
+	-- jdtls = require('configs.lspconfig.languages.jdtls').jdtls(capabilities, on_attach)
 }
 
 require('configs.lspconfig.languages.rust-analyzer').rust_tools(capabilities, on_attach)
