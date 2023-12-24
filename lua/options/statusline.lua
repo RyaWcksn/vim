@@ -1,6 +1,5 @@
 M = {}
 
-
 M.setup = function()
 	local modes = {
 		["n"] = "NO",

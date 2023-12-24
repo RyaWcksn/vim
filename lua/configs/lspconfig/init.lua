@@ -1,5 +1,7 @@
 local lsp = require('lspconfig')
 local capabilities = vim.lsp.protocol.make_client_capabilities()
+require("lspconfig.ui.windows").default_options.border = "double"
+
 
 local border = {
 	{ "🭽", "FloatBorder" },

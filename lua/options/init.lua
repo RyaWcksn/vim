@@ -7,8 +7,6 @@ opt.fillchars = { eob = " " }
 g.ultest_use_pty = 1
 g.do_filetype_lua = 1
 
-vim.notify = require("notify")
-
 vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
 vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
 vim.opt.background = "light" -- set this to dark or light
