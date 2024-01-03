@@ -1,6 +1,3 @@
--- This file can be loaded by calling `lua require('plugins')` from your init.vimplinonplini
---
---
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
 	vim.fn.system({
@@ -14,20 +11,9 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- Example using a list of specs with the default options
-vim.g.mapleader = " " -- Make sure to set `mapleader` before lazy so your mappings are correct
+vim.g.mapleader = " "
 
 require("lazy").setup({
-	-- { 'rcarriga/nvim-notify' },
-	{
-		"williamboman/mason.nvim",
-		lazy = true,
-		config = function()
-			require('configs.mason')
-		end,
-		cmd = { "Mason", "MasonInstall", "MasonUninstall", "MasonUninstallAll", "MasonLog" },
-	},
-
 	{
 		"mfussenegger/nvim-jdtls",
 		ft = "java"
@@ -53,24 +39,11 @@ require("lazy").setup({
 	{
 		"APZelos/blamer.nvim"
 	},
-
-	-- RPC
 	{
 		'andweeb/presence.nvim',
 		config = function()
 			require('configs.presence')
 		end
-	},
-
-	-- Database
-	{ 'tpope/vim-dadbod' },
-	{ 'kristijanhusak/vim-dadbod-ui' },
-
-	{
-		"williamboman/mason-lspconfig.nvim",
-		lazy = true,
-		cmd = { "LspInstall", "LspUninstall" },
-		dependencies = "mason.nvim",
 	},
 	{
 		'scalameta/nvim-metals',
@@ -79,16 +52,12 @@ require("lazy").setup({
 		end,
 		dependencies = { "nvim-lua/plenary.nvim" },
 	},
-	-- Lsp
 	{
 		'neovim/nvim-lspconfig',
-		lazy = true,
 		config = function()
 			require('configs.lspconfig')
 		end,
 	},
-
-	-- Flutter
 	{
 		"akinsho/flutter-tools.nvim",
 		ft = "dart",
@@ -97,7 +66,6 @@ require("lazy").setup({
 			require("configs.flutter")
 		end,
 	},
-
 	{
 		"folke/which-key.nvim",
 		config = function()
@@ -128,7 +96,6 @@ require("lazy").setup({
 		lazy = false,
 	},
 	{ 'nvim-treesitter/playground' },
-
 	{
 		'nvim-tree/nvim-tree.lua',
 		dependencies = 'nvim-tree/nvim-web-devicons',
@@ -138,8 +105,6 @@ require("lazy").setup({
 		end,
 		event = "User DirOpened",
 	},
-
-	-- Telescope
 	{ 'nvim-lua/plenary.nvim' },
 	{
 		'nvim-telescope/telescope.nvim',
@@ -150,7 +115,6 @@ require("lazy").setup({
 		cmd = "Telescope",
 	},
 	{ 'nvim-telescope/telescope-fzf-native.nvim', make = 'make' },
-
 	{
 		'hrsh7th/nvim-cmp',
 		config = function()
@@ -179,7 +143,6 @@ require("lazy").setup({
 			"friendly-snippets",
 		},
 	},
-
 	{
 		"klen/nvim-test",
 		config = function()
@@ -187,7 +150,6 @@ require("lazy").setup({
 		end
 	},
 
-	-- Debugging
 	{
 		'mfussenegger/nvim-dap'
 	},
@@ -198,16 +160,9 @@ require("lazy").setup({
 		end
 	},
 	{
-		"jay-babu/mason-nvim-dap.nvim",
-		config = function()
-			require("configs.mason-dap")
-		end
-	},
-	{
 		'leoluz/nvim-dap-go',
 		ft = "go"
 	},
-
 	{
 		"olexsmir/gopher.nvim",
 		dependencies = { -- dependencies
@@ -225,7 +180,6 @@ require("lazy").setup({
 			require("configs.toggleterm")
 		end
 	},
-
 	{
 		"windwp/nvim-autopairs",
 		wants = "nvim-treesitter",
