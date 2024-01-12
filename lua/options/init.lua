@@ -9,7 +9,7 @@ g.do_filetype_lua = 1
 
 vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
 vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
-vim.opt.background = "light" -- set this to dark or light
+vim.opt.background = "dark" -- set this to dark or light
 vim.cmd("colorscheme default")
 vim.api.nvim_set_option('fileformat', 'unix')
 opt.hlsearch = false
@@ -33,7 +33,7 @@ opt.foldmethod = "expr"
 opt.foldexpr = "nvim_treesitter#foldexpr()"
 opt.number = true
 opt.numberwidth = 2
-opt.relativenumber = true
+opt.relativenumber = false
 opt.colorcolumn = "90"
 vim.wo.wrap = false
 
@@ -70,10 +70,6 @@ local disabled_built_ins = {
 	"getscriptPlugin",
 	"gzip",
 	"logipat",
-	"netrw",
-	"netrwPlugin",
-	"netrwSettings",
-	"netrwFileHandlers",
 	"matchit",
 	"matchparen",
 	"tar",
@@ -94,5 +90,8 @@ vim.g.gitblame_enabled = 0
 vim.g.gitblame_message_template = "<summary> • <date> • <author>"
 vim.g.gitblame_highlight_group = "LineNr"
 
+vim.g.netrw_winsize = 20
+vim.g.netrw_banner = 0
+vim.g.netrw_keepdir = 0
 
 vim.g.gist_open_browser_after_post = 1

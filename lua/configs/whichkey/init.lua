@@ -142,7 +142,8 @@ wk.register({
 	},
 	o = {
 		name = "+Open",
-		e = { ":NvimTreeToggle<CR>", "NvimTree" },
+		--e = { ":Lexplore %:p:h<CR>", "Filetree" },
+		e = { ":NvimTreeToggle<CR>", "Filetree" },
 		t = { ":ToggleTerm<CR>", "ToggleTerm" },
 	},
 	l = {

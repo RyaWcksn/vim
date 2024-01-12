@@ -88,3 +88,32 @@ key('i', '<c-s>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opt)
 
 -- key("n", "hh", "zc", opt)
 -- key("n", "ll", "zo", opt)
+--
+local function netrw_mapping()
+	local bufmap = function(lhs, rhs)
+		local opts = { buffer = true, remap = true }
+		vim.keymap.set('n', lhs, rhs, opts)
+	end
+
+	-- close window
+	bufmap('<leader>oe', ':Lexplore<CR>')
+
+	-- Better navigation
+	bufmap('H', 'u')
+	bufmap('h', '-^')
+	bufmap('l', '<CR>')
+	bufmap('L', '<CR>:Lexplore<CR>')
+	bufmap('a', '%:w<CR>:buffer #<CR>')
+	bufmap('fr', 'r')
+
+	-- Toggle dotfiles
+	bufmap('.', 'gh')
+end
+
+local user_cmds = vim.api.nvim_create_augroup('user_cmds', { clear = true })
+vim.api.nvim_create_autocmd('filetype', {
+	pattern = 'netrw',
+	group = user_cmds,
+	desc = 'Keybindings for netrw',
+	callback = netrw_mapping
+})
