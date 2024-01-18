@@ -40,19 +40,6 @@ require("lazy").setup({
 		"APZelos/blamer.nvim"
 	},
 	{
-		'andweeb/presence.nvim',
-		config = function()
-			require('configs.presence')
-		end
-	},
-	{
-		'scalameta/nvim-metals',
-		config = function()
-			require('configs.metals')
-		end,
-		dependencies = { "nvim-lua/plenary.nvim" },
-	},
-	{
 		'neovim/nvim-lspconfig',
 		config = function()
 			require('configs.lspconfig')
@@ -91,10 +78,6 @@ require("lazy").setup({
 		},
 		event = "User FileOpened",
 	},
-	{
-		"nvim-treesitter/nvim-treesitter-context",
-		lazy = false,
-	},
 	{ 'nvim-treesitter/playground' },
 	{
 		'nvim-tree/nvim-tree.lua',
@@ -122,17 +105,12 @@ require("lazy").setup({
 		end,
 		event = { "InsertEnter", "CmdlineEnter" },
 		dependencies = {
-			"cmp-nvim-lsp",
-			"cmp_luasnip",
-			"cmp-buffer",
-			"cmp-path",
+			{ "hrsh7th/cmp-nvim-lsp",         lazy = true },
+			{ "saadparwaiz1/cmp_luasnip",     lazy = true },
+			{ "hrsh7th/cmp-path",             lazy = true },
+			{ "rafamadriz/friendly-snippets", lazy = true },
 		},
 	},
-	{ "hrsh7th/cmp-nvim-lsp",                     lazy = true },
-	{ "saadparwaiz1/cmp_luasnip",                 lazy = true },
-	{ "hrsh7th/cmp-buffer",                       lazy = true },
-	{ "hrsh7th/cmp-path",                         lazy = true },
-	{ "rafamadriz/friendly-snippets",             lazy = true },
 	{
 		'L3MON4D3/LuaSnip',
 		config = function()
@@ -144,17 +122,10 @@ require("lazy").setup({
 		},
 	},
 	{
-		"klen/nvim-test",
-		config = function()
-			require('configs.test')
-		end
-	},
-
-	{
-		'mfussenegger/nvim-dap'
-	},
-	{
 		"rcarriga/nvim-dap-ui",
+		dependencies = {
+			'mfussenegger/nvim-dap'
+		},
 		config = function()
 			require("configs.dap")
 		end
@@ -165,7 +136,7 @@ require("lazy").setup({
 	},
 	{
 		"olexsmir/gopher.nvim",
-		dependencies = { -- dependencies
+		dependencies = {
 			"nvim-lua/plenary.nvim",
 			"nvim-treesitter/nvim-treesitter",
 		},

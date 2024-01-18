@@ -82,7 +82,6 @@ cmp.setup({
 		{ name = "path" },
 		{ name = "cmp_tabnine" },
 		{ name = "nvim_lua" },
-		{ name = "buffer" },
 		{ name = "calc" },
 		{ name = "emoji" },
 		{ name = "treesitter" },

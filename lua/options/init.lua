@@ -85,7 +85,6 @@ for _, plugin in pairs(disabled_built_ins) do
 	g["loaded_" .. plugin] = 1
 end
 
-
 vim.g.gitblame_enabled = 0
 vim.g.gitblame_message_template = "<summary> • <date> • <author>"
 vim.g.gitblame_highlight_group = "LineNr"
