@@ -1,11 +1,14 @@
 local M = {}
 
 M.pyright = function(capabilities, on_attach)
-	local pyright = vim.fn.stdpath("data") .. "/mason/bin/pyright-langserver"
 	local lsp = require('lspconfig')
+	vim.env.PYENV_VERSION = vim.fn.system('pyenv version'):match('(%S+)%s+%(.-%)')
 	local setup = {
-		cmd = { pyright, "--stdio" },
+		cmd = { "pyright-langserver", "--stdio" },
 		on_attach = on_attach,
+		capabilities = capabilities,
+		single_file_support = true,
+		filetypes = { "python" }
 	}
 	return setup
 end

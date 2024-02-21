@@ -93,6 +93,20 @@ wk.setup {
 	}
 }
 
+local function get_netrw_path()
+    -- Get the current netrw directory
+    local netrw_curdir = vim.fn.expand('%:p:h')
+
+    -- Prompt the user for the filename
+    local filename = vim.fn.input('Enter filename: ')
+
+    -- Combine the directory path and the filename
+    local file_path = netrw_curdir .. "/" .. filename
+
+    -- Return the concatenated path
+    return file_path
+end
+
 wk.register({
 	b = {
 		name = "+Buffer",

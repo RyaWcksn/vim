@@ -91,6 +91,6 @@ vim.g.gitblame_highlight_group = "LineNr"
 
 vim.g.netrw_winsize = 20
 vim.g.netrw_banner = 0
-vim.g.netrw_keepdir = 0
+vim.g.netrw_keepdir = 1
 
 vim.g.gist_open_browser_after_post = 1
