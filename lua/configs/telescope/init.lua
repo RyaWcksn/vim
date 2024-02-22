@@ -29,8 +29,8 @@ end
 -- require('telescope').extensions.packer.plugins(opts)
 telescope.setup({
 	defaults = {
-		prompt_prefix = " ",
-		selection_caret = " ",
+		prompt_prefix = "+ ",
+		selection_caret = "= ",
 
 		vimgrep_arguments = {
 			"rg",
