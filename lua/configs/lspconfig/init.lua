@@ -185,6 +185,7 @@ local servers = {
 	kotlin_language_server = require('configs.lspconfig.languages.kotlin').kotlin(capabilities, on_attach),
 	terraformls = require('configs.lspconfig.languages.terraformls').terraformls(capabilities, on_attach),
 	yamlls = require('configs.lspconfig.languages.yamlls').yamlls(capabilities, on_attach),
+	prismals = require('configs.lspconfig.languages.prismals').prismals(capabilities, on_attach),
 	-- jdtls = require('configs.lspconfig.languages.jdtls').jdtls(capabilities, on_attach)
 }
 
