@@ -19,7 +19,6 @@ opt.hidden = true
 opt.ignorecase = true
 opt.splitbelow = true
 opt.splitright = true
-opt.termguicolors = false
 opt.cul = true
 opt.mouse = "a"
 opt.signcolumn = "yes"
@@ -91,6 +90,7 @@ vim.g.gitblame_highlight_group = "LineNr"
 
 vim.g.netrw_winsize = 20
 vim.g.netrw_banner = 0
-vim.g.netrw_keepdir = 1
+vim.g.netrw_keepdir = 0
+
 
 vim.g.gist_open_browser_after_post = 1

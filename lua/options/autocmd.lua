@@ -1,19 +1,15 @@
-M = {}
+local augroup = vim.api.nvim_create_augroup('user_cmds', { clear = true })
 
-M.autocmd = function()
-	vim.api.nvim_create_autocmd("BufEnter", {
-		callback = function()
-			local bufs_loaded = {}
-
-			for _, buf_hndl in ipairs(vim.api.nvim_list_bufs()) do
-				if vim.api.nvim_buf_is_loaded(buf_hndl) then
-					table.insert(bufs_loaded, vim.api.nvim_buf_get_name(buf_hndl))
-				end
-			end
-
-			vim.o.winbar = "%<%{luaeval('table.concat(bufs_loaded, \\' \\' )')}>"
-		end
-	})
-end
-
-return M
+vim.api.nvim_create_autocmd('FileType', {
+	pattern = { 'help', 'man' },
+	group = augroup,
+	desc = 'Use q to close the window',
+	command = 'nnoremap <buffer> q <cmd>quit<cr>'
+})
+vim.api.nvim_create_autocmd('TextYankPost', {
+	group = augroup,
+	desc = 'Highlight on yank',
+	callback = function(event)
+		vim.highlight.on_yank({ higroup = 'Visual', timeout = 200 })
+	end
+})

@@ -1,26 +1,10 @@
 local lsp = require('lspconfig')
 local capabilities = vim.lsp.protocol.make_client_capabilities()
-require("lspconfig.ui.windows").default_options.border = "double"
-
-
-local border = {
-	{ "🭽", "FloatBorder" },
-	{ "▔", "FloatBorder" },
-	{ "🭾", "FloatBorder" },
-	{ "▕", "FloatBorder" },
-	{ "🭿", "FloatBorder" },
-	{ "▁", "FloatBorder" },
-	{ "🭼", "FloatBorder" },
-	{ "▏", "FloatBorder" },
-
-}
 
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 capabilities.textDocument.completion.completionItem.resolveSupport = {
 	properties = { "documentation", "detail", "additionalTextEdits" },
 }
-capabilities.experimental = {}
-capabilities.experimental.hoverActions = true
 
 vim.lsp.set_log_level("debug")
 
@@ -52,6 +36,33 @@ local config = {
 }
 vim.diagnostic.config(config)
 
+signature_help_window_opened = false
+signature_help_forced = false
+function my_signature_help_handler(handler)
+	return function(...)
+		if _G.signature_help_forced and _G.signature_help_window_opened then
+			_G.signature_help_forced = false
+			return handler(...)
+		end
+		if _G.signature_help_window_opened then
+			return
+		end
+		local fbuf, fwin = handler(...)
+		_G.signature_help_window_opened = true
+		vim.api.nvim_exec("autocmd WinClosed " .. fwin .. " lua _G.signature_help_window_opened=false", false)
+		return fbuf, fwin
+	end
+end
+
+function force_signature_help()
+	_G.signature_help_forced = true
+	vim.lsp.buf.signature_help()
+end
+
+local key = vim.keymap.set
+-- These mappings allow to focus on the floating window when opened.
+key('n', '<C-k>', '<cmd>lua force_signature_help()<CR>', opts)
+key('i', '<C-k>', '<cmd>lua force_signature_help()<CR>', opts)
 
 local on_attach = function(client, bufnr)
 	vim.o.updatetime = 250
@@ -88,22 +99,10 @@ local on_attach = function(client, bufnr)
 	end
 
 	if client.server_capabilities.signatureHelpProvider then
-		vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help,
-			{ border = border })
-		-- 	vim.api.nvim_create_autocmd("CursorHoldI", {
-		-- 		buffer = bufnr,
-		-- 		callback = function()
-		-- 			local opts = {
-		-- 				focusable = false,
-		-- 				close_events = { "BufLeave", "CursorMovedI", "FocusLost" },
-		-- 				border = 'rounded',
-		-- 				source = 'always',
-		-- 				prefix = ' ',
-		-- 				scope = 'cursor',
-		-- 			}
-		-- 			vim.lsp.buf.signature_help(nil, opts)
-		-- 		end
-		-- 	})
+		vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(
+			my_signature_help_handler(vim.lsp.handlers.signature_help),
+			{}
+		)
 	end
 
 	if client.server_capabilities.definitionProvider then
@@ -126,13 +125,11 @@ local on_attach = function(client, bufnr)
 			end
 		end
 	end
-	if client.server_capabilities.documentHighlightProvider then
-		vim.cmd [[
-		    hi! LspReferenceRead ctermbg=black ctermfg=white guibg=LightYellow
-		    hi! LspReferenceText ctermbg=black ctermfg=white guibg=LightYellow
-		    hi! LspReferenceWrite ctermbg=black ctermfg=white guibg=LightYellow
 
-		]]
+	if client.server_capabilities.documentHighlightProvider then
+		vim.api.nvim_set_hl(bufnr, 'LspReferenceRead', { link = 'Search' })
+		vim.api.nvim_set_hl(bufnr, 'LspReferenceText', { link = 'Search' })
+		vim.api.nvim_set_hl(bufnr, 'LspReferenceWrite', { link = 'Search' })
 		vim.api.nvim_create_augroup('lsp_document_highlight', {
 			clear = false
 		})
@@ -151,25 +148,6 @@ local on_attach = function(client, bufnr)
 			callback = vim.lsp.buf.clear_references,
 		})
 	end
-end
-
-
-
-local border = {
-	{ "🭽", "FloatBorder" },
-	{ "▔", "FloatBorder" },
-	{ "🭾", "FloatBorder" },
-	{ "▕", "FloatBorder" },
-	{ "🭿", "FloatBorder" },
-	{ "▁", "FloatBorder" },
-	{ "🭼", "FloatBorder" },
-	{ "▏", "FloatBorder" },
-}
-local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
-function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
-	opts = opts or {}
-	opts.border = opts.border or border
-	return orig_util_open_floating_preview(contents, syntax, opts, ...)
 end
 
 local servers = {

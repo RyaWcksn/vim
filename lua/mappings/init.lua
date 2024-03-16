@@ -1,102 +1,89 @@
 vim.g.mapleader = " "
 
 local opt = { silent = true, noremap = true }
-local key = vim.keymap.set
+local keymap = vim.keymap.set
 
 -- Resize split panes
-key('n', '<M-UP>', '<cmd>resize +2<cr>', opt)
-key('n', '<M-DOWN>', '<cmd>resize -2<cr>', opt)
-key('n', '<M-LEFT>', '<cmd>vertical resize +2<cr>', opt)
-key('n', '<M-RIGHT>', '<cmd>vertical resize -2<cr>', opt)
+keymap('n', '<M-UP>', '<cmd>resize +2<cr>', opt)
+keymap('n', '<M-DOWN>', '<cmd>resize -2<cr>', opt)
+keymap('n', '<M-LEFT>', '<cmd>vertical resize +2<cr>', opt)
+keymap('n', '<M-RIGHT>', '<cmd>vertical resize -2<cr>', opt)
 
 -- Search and replace in visual selection
-key('x', '<leader>/', [[:s/\%V]], opt)
+keymap('x', '<leader>/', [[:s/\%V]], opt)
 
-key({ 'n', 'x' }, 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
-key({ 'n', 'x' }, 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
+keymap({ 'n', 'x' }, 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
+keymap({ 'n', 'x' }, 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 
--- key('n', 'f', 'vf', { desc = "Move to next char" })
--- key('n', 'F', 'vF', { desc = "Move to prev char" })
---
--- key('n', 't', 'vf', { desc = "Move to before next char" })
--- key('n', 'T', 'vT', { desc = "Move to before prev char" })
---
+keymap({ 'n' }, '<F3>', "zc", { desc = "Fold" })
+keymap({ 'n' }, '<F4>', "zR", { desc = "Unfold all" })
+keymap({ 'n' }, '<F5>', "zo", { desc = "Unfold" })
 
-key({ 'n' }, '<F3>', "zc", { desc = "Fold" })
-key({ 'n' }, '<F4>', "zR", { desc = "Unfold all" })
-key({ 'n' }, '<F5>', "zo", { desc = "Unfold" })
-
-key('n', "<F7>", "%s/\r//g", { desc = "Remove carriage-enter" })
+keymap('n', "<F7>", "%s/\r//g", { desc = "Remove carriage-enter" })
 
 -- Function to exit visual mode
 local function exit_visual_mode()
 	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true)
 end
 
-key('n', '<bs>', '<c-^>\'”zz', { desc = "Prev buffer" })
+keymap('n', '<bs>', '<c-^>\'”zz', { desc = "Prev buffer" })
 
 -- Stuff
-key("n", "J", "mzJ`z", opt)
-key("n", "Y", "y$", opt)
-key("n", "N", "Nzzzv", opt)
-key("n", "n", "nzzzv", opt)
-key('n', '<c-k>', ':m -2<CR>==', opt)
-key('n', '<c-j>', ':m +1<CR>==', opt)
-key('v', '<M-k>', ":m '<-2<CR>gv=gv", opt)
-key('v', '<M-j>', ":m '>+1<CR>gv=gv", opt)
+keymap("n", "J", "mzJ`z", opt)
+keymap("n", "Y", "y$", opt)
+keymap("n", "N", "Nzzzv", opt)
+keymap("n", "n", "nzzzv", opt)
+keymap('n', '<c-k>', ':m -2<CR>==', opt)
+keymap('n', '<c-j>', ':m +1<CR>==', opt)
+keymap('v', '<M-k>', ":m '<-2<CR>gv=gv", opt)
+keymap('v', '<M-j>', ":m '>+1<CR>gv=gv", opt)
 
 -- Add blank line without leaving normal mode
-key('n', '<leader>o', 'o<Esc>', opt)
-key('n', '<leader>O', 'O<Esc>', opt)
+keymap('n', '<leader>o', 'o<Esc>', opt)
+keymap('n', '<leader>O', 'O<Esc>', opt)
 
 -- Delete word with backspace
-key('n', '<C-BS>', 'a<C-w>', opt)
+keymap('n', '<C-BS>', 'a<C-w>', opt)
 
 -- Indent
-key("v", "J", ":m '>+1<CR>gv=gv", opt)
-key("v", "K", ":m '<-2<CR>gv=gv", opt)
-key("v", "L", ">gv", opt)
-key("v", "H", "<gv", opt)
+keymap("v", "J", ":m '>+1<CR>gv=gv", opt)
+keymap("v", "K", ":m '<-2<CR>gv=gv", opt)
+keymap("v", "L", ">gv", opt)
+keymap("v", "H", "<gv", opt)
 
 -- Using ; to Command mode
--- key("n", ";", ":", {})
+-- keymap("n", ";", ":", {})
 
 -- Using jk as ESC
-key("t", "jk", "<C-\\><C-n>", opt)
-key({ "i", "v" }, "jk", "<esc>", opt)
+keymap("t", "jk", "<C-\\><C-n>", opt)
+keymap({ "i", "v" }, "jk", "<esc>", opt)
 
 -- Terminal Float
-key("t", "<F2>", "<C-\\><C-n>:ToggleTerm<CR>", opt)
-key("i", "<F2>", "<C-\\><C-n>:ToggleTerm<CR>", opt)
-key("n", "<F2>", "<C-\\><C-n>:ToggleTerm<CR>", opt)
+keymap("t", "<F2>", "<C-\\><C-n>:ToggleTerm<CR>", opt)
+keymap("i", "<F2>", "<C-\\><C-n>:ToggleTerm<CR>", opt)
+keymap("n", "<F2>", "<C-\\><C-n>:ToggleTerm<CR>", opt)
 
 -- Search and replace word under the cursor
-key('n', '<leader>R', ':%s/\\<<C-r><C-w>\\>/<C-r><C-w>/gI<Left><Left><Left>',
+keymap('n', '<leader>R', ':%s/\\<<C-r><C-w>\\>/<C-r><C-w>/gI<Left><Left><Left>',
 	{ desc = 'Search and replace word under the cursor' })
 
 -- Carbon Now Sha
-key("v", "<F5>", ":CarbonNowSh<CR>", opt)
+keymap("v", "<F5>", ":CarbonNowSh<CR>", opt)
 
-key("n", "<Up>", "<C-u>", opt)
-key("n", "<Down>", "<C-d>", opt)
+keymap("n", "<Up>", "<C-u>", opt)
+keymap("n", "<Down>", "<C-d>", opt)
 
 -- Vim
-key("n", "K", ":lua vim.lsp.buf.hover()<CR>", opt)
-key('n', '[', ":lua vim.diagnostic.goto_prev()<CR>", opt)
-key('n', ']', ":lua vim.diagnostic.goto_next()<CR>", opt)
-key('i', '<c-s>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opt)
+keymap("n", "K", ":lua vim.lsp.buf.hover()<CR>", opt)
+keymap('n', '[', ":lua vim.diagnostic.goto_prev()<CR>", opt)
+keymap('n', ']', ":lua vim.diagnostic.goto_next()<CR>", opt)
+keymap('i', '<c-s>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opt)
 
--- key("n", "hh", "zc", opt)
--- key("n", "ll", "zo", opt)
---
 local function netrw_mapping()
 	local bufmap = function(lhs, rhs)
 		local opts = { buffer = true, remap = true }
 		vim.keymap.set('n', lhs, rhs, opts)
 	end
-
-	-- close window
-	bufmap('<leader>oe', ':Lexplore<CR>')
 
 	-- Better navigation
 	bufmap('H', 'u')
@@ -105,6 +92,7 @@ local function netrw_mapping()
 	bufmap('L', '<CR>:Lexplore<CR>')
 	bufmap('a', '%:w<CR>:buffer #<CR>')
 	bufmap('fr', 'r')
+	bufmap('q', ':q<CR>')
 
 	-- Toggle dotfiles
 	bufmap('.', 'gh')
