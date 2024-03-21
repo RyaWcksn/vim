@@ -10,6 +10,7 @@ M.gopls = function(capabilities, on_attach)
 		root_dir = lsp.util.root_pattern('.git', 'go.mod', '.'),
 		settings = {
 			gopls = {
+				gofumpt = true,
 				analyses = {
 					unreachable = true,
 					nilness = true,
@@ -25,8 +26,8 @@ M.gopls = function(capabilities, on_attach)
 				},
 				codelenses = {
 					enabled = true,
-					generate = true, -- show the `go generate` lens.
-					gc_details = true, -- Show a code lens toggling the display of gc's choices.
+					generate = true,
+					gc_details = true,
 					test = true,
 					tidy = true,
 					vendor = true,
@@ -49,6 +50,7 @@ M.gopls = function(capabilities, on_attach)
 					parameterNames = true,
 					rangeVariableTypes = true,
 				},
+				semanticTokens = true,
 			},
 		},
 	}

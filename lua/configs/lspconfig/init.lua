@@ -148,13 +148,26 @@ local on_attach = function(client, bufnr)
 			callback = vim.lsp.buf.clear_references,
 		})
 	end
+
+	if not client.server_capabilities.semanticTokensProvider then
+		local semantic = client.config.capabilities.textDocument.semanticTokens
+		client.server_capabilities.semanticTokensProvider = {
+			full = true,
+			legend = {
+				tokenTypes = semantic.tokenTypes,
+				tokenModifiers = semantic.tokenModifiers,
+			},
+			range = true,
+		}
+	end
 end
 
 local servers = {
 	gopls = require('configs.lspconfig.languages.gopls').gopls(capabilities, on_attach),
 	golangci_lint_ls = require('configs.lspconfig.languages.golang-ci').golangci(capabilities, on_attach),
-	pyright = require('configs.lspconfig.languages.pyright').pyright(capabilities, on_attach),
+	--pyright = require('configs.lspconfig.languages.pyright').pyright(capabilities, on_attach),
 	--rust_analyzer = require('configs.lspconfig.languages.rust-analyzer').rust_analyzer(capabilities, on_attach),
+	basedpyright = require('configs.lspconfig.languages.basedpyright').basedpyright(capabilities, on_attach),
 	tsserver = require('configs.lspconfig.languages.tsserver').tsserver(capabilities, on_attach),
 	tailwindcss = require('configs.lspconfig.languages.tailwindcss').tailwind(capabilities, on_attach),
 	lua_ls = require('configs.lspconfig.languages.lua-ls').lua_ls(capabilities, on_attach),

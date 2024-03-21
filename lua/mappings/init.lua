@@ -3,6 +3,19 @@ vim.g.mapleader = " "
 local opt = { silent = true, noremap = true }
 local keymap = vim.keymap.set
 
+local function get_full_path_under_cursor()
+	-- Get the file name under the cursor
+	local cursor_word = vim.fn.expand('<cWORD>')
+	print(cursor_word)
+	-- Get the current working directory
+	local cwd = vim.fn.getcwd()
+	print(cwd)
+	-- Construct the full path
+	local full_path = vim.fn.fnamemodify(cwd .. '/' .. cursor_word, ':p')
+	print(full_path)
+end
+
+
 -- Resize split panes
 keymap('n', '<M-UP>', '<cmd>resize +2<cr>', opt)
 keymap('n', '<M-DOWN>', '<cmd>resize -2<cr>', opt)
@@ -46,7 +59,6 @@ keymap('n', '<leader>O', 'O<Esc>', opt)
 keymap('n', '<C-BS>', 'a<C-w>', opt)
 
 -- Indent
-keymap("v", "J", ":m '>+1<CR>gv=gv", opt)
 keymap("v", "K", ":m '<-2<CR>gv=gv", opt)
 keymap("v", "L", ">gv", opt)
 keymap("v", "H", "<gv", opt)
@@ -79,6 +91,67 @@ keymap('n', '[', ":lua vim.diagnostic.goto_prev()<CR>", opt)
 keymap('n', ']', ":lua vim.diagnostic.goto_next()<CR>", opt)
 keymap('i', '<c-s>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opt)
 
+local mappings = {
+	normal = {
+		['<leader>a'] = {
+			action = '<CMD>lua create_file()<CR>',
+			desc = 'Create new file'
+		}
+	},
+	visual = {
+		['<leader>J'] = {
+			action = ":m '>+1<CR>gv=gv",
+			desc = "Move code down to up"
+		},
+	},
+}
+
+for i, k in pairs(mappings) do
+	for key, command in pairs(k) do
+		local mode
+		if i == 'normal' then
+			mode = 'n'
+		end
+		if i == 'visual' then
+			mode = 'v'
+		end
+		if i == 'insert' then
+			mode = 'i'
+		end
+		if i == 'term' then
+			mode = 't'
+		end
+
+		local bufmap = function(mode, lhs, rhs, desc)
+			local opts = { buffer = true, remap = true, desc = desc }
+			vim.keymap.set(mode, lhs, rhs, opts)
+		end
+
+		bufmap(mode, key, command.action, command.desc)
+	end
+end
+
+
+function create_file()
+	-- Get the current netrw directory
+	local netrw_curdir = vim.fn.expand('%:p:h')
+
+	-- Prompt the user for the filename
+	local filename = vim.fn.input('Enter filename: ')
+
+	-- Combine the directory path and the filename
+	local file_path = netrw_curdir .. "/" .. filename
+	if vim.fn.filereadable(file_path) == 0 then
+		-- Create an empty file
+		vim.fn.writefile({}, file_path)
+		print("File created: " .. file_path)
+	else
+		print("File already exists: " .. file_path)
+	end
+
+	vim.cmd("edit " .. file_path)
+end
+
 local function netrw_mapping()
 	local bufmap = function(lhs, rhs)
 		local opts = { buffer = true, remap = true }
@@ -90,9 +163,10 @@ local function netrw_mapping()
 	bufmap('h', '-^')
 	bufmap('l', '<CR>')
 	bufmap('L', '<CR>:Lexplore<CR>')
-	bufmap('a', '%:w<CR>:buffer #<CR>')
+	bufmap('a', ':q<CR><CMD>lua create_file()<CR>')
 	bufmap('fr', 'r')
 	bufmap('q', ':q<CR>')
+	bufmap('?', ':WhichKey<CR>')
 
 	-- Toggle dotfiles
 	bufmap('.', 'gh')
