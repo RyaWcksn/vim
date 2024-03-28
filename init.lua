@@ -1,5 +1,6 @@
 require('plugins')
+require('mappings')
 require('options')
 require('options.autocmd')
-require('mappings')
-require('options.statusline').setup()
+require('options.statusline')
+require('options.winbar')

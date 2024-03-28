@@ -132,7 +132,7 @@ for i, k in pairs(mappings) do
 end
 
 
-function create_file()
+local function create_file()
 	-- Get the current netrw directory
 	local netrw_curdir = vim.fn.expand('%:p:h')
 
