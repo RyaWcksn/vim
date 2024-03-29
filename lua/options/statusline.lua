@@ -92,7 +92,7 @@ local function statusbar_exec()
 		"%#Normal#",
 		mode(),
 		get_git_branch(),
-		filepath() .. filename(),
+		filepath() .. filename() .. "%r",
 		"%=%#Extra#",
 		"%#Normal#",
 		lsp_servers(),

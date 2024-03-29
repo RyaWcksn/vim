@@ -6,6 +6,8 @@ opt.fillchars = { eob = " " }
 vim.opt.background = "dark" -- set this to dark or light
 vim.cmd("colorscheme default")
 
+g.markdown_fenced_languages = { 'html', 'python', 'lua', 'vim', 'typescript', 'javascript' }
+
 opt.hlsearch = false
 opt.undofile = true
 opt.ruler = false
@@ -57,21 +59,6 @@ local autoCommands = {
 M.nvim_create_augroups(autoCommands)
 
 
-local augroup = vim.api.nvim_create_augroup('user_cmds', { clear = true })
-
-vim.api.nvim_create_autocmd('FileType', {
-	pattern = { 'help', 'man' },
-	group = augroup,
-	desc = 'Use q to close the window',
-	command = 'nnoremap <buffer> q <cmd>quit<cr>'
-})
-vim.api.nvim_create_autocmd('TextYankPost', {
-	group = augroup,
-	desc = 'Highlight on yank',
-	callback = function(event)
-		vim.highlight.on_yank({ higroup = 'Visual', timeout = 200 })
-	end
-})
 
 
 local disabled_built_ins = {
