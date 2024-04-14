@@ -22,6 +22,10 @@ keymap('n', '<M-DOWN>', '<cmd>resize -2<cr>', opt)
 keymap('n', '<M-LEFT>', '<cmd>vertical resize +2<cr>', opt)
 keymap('n', '<M-RIGHT>', '<cmd>vertical resize -2<cr>', opt)
 
+-- Quickfix
+keymap('n', '<C-l>', ":cnext<CR>", opt)
+keymap('n', '<C-h>', ":cprev<CR>", opt)
+
 -- Search and replace in visual selection
 keymap('x', '<leader>/', [[:s/\%V]], opt)
 
