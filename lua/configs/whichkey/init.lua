@@ -134,25 +134,11 @@ wk.register({
 	f = {
 		name = "+Finds",
 		f = { ":Telescope find_files theme=dropdown<CR>", "Find Files" },
-		w = { ":Telescope live_grep<CR>", "Find Words" },
-		g = { ":Telescope git_status<CR>", "Find Commits" },
-		b = { ":lua require'telescope.builtin'.buffers(require('telescope.themes').get_dropdown({}))<CR>",
-			"Find Buffers" },
-		h = { ":Telescope help_tags<CR>", "Find Helps" },
 	},
 	p = {
 		name = "+Packer",
 		s = { ":PackerSync<CR>", "Sync plugins" },
 		i = { ":PackerInstall<CR>", "Install plugins" }
-	},
-	s = {
-		name = "+Save",
-		w = { ":w<CR>", "Save" },
-		s = { ":SudaWrite<CR>", "Sudo save" },
-	},
-	g = {
-		name = "+Git",
-		g = { ":Neogit<CR>", "Neogit" },
 	},
 	o = {
 		name = "+Open",
@@ -162,18 +148,6 @@ wk.register({
 	},
 	l = {
 		name = "+LSP",
-		f = { ":lua vim.lsp.buf.format()<CR>", "Code Format" },
-		c = { ":lua vim.lsp.buf.code_action()<CR>", "Code Action" },
-		s = { ":lua vim.lsp.buf.signature_help()<CR>", "Code Signature" },
-		d = { ":lua vim.lsp.buf.definition()<CR>", "Code Definition" },
-		i = { ":lua vim.lsp.buf.implementation()<CR>", "Code Implementation" },
-		w = { ":lua vim.lsp.buf.references()<CR>", "Code References" },
-		l = { ":lua vim.lsp.codelens.run()<CR>", "Code Lens" },
-		L = { ":lua vim.lsp.codelens.refresh()<CR>", "Code Lens" },
-		r = { ":lua vim.lsp.buf.rename()<CR>", "Rename" },
-		t = { ":Telescope diagnostics<CR>", "Error Diagnostics" },
-		["["] = { ":lua vim.diagnostic.goto_prev()<CR>", "Prev Diagnostics" },
-		["]"] = { ":lua vim.diagnostic.goto_next()<CR>", "Next Diagnostics" },
 	},
 	d = {
 		name = "+DB",

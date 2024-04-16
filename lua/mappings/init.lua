@@ -3,19 +3,6 @@ vim.g.mapleader = " "
 local opt = { silent = true, noremap = true }
 local keymap = vim.keymap.set
 
-local function get_full_path_under_cursor()
-	-- Get the file name under the cursor
-	local cursor_word = vim.fn.expand('<cWORD>')
-	print(cursor_word)
-	-- Get the current working directory
-	local cwd = vim.fn.getcwd()
-	print(cwd)
-	-- Construct the full path
-	local full_path = vim.fn.fnamemodify(cwd .. '/' .. cursor_word, ':p')
-	print(full_path)
-end
-
-
 -- Resize split panes
 keymap('n', '<M-UP>', '<cmd>resize +2<cr>', opt)
 keymap('n', '<M-DOWN>', '<cmd>resize -2<cr>', opt)
@@ -35,8 +22,6 @@ keymap({ 'n', 'x' }, 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = t
 keymap({ 'n' }, '<F3>', "zc", { desc = "Fold" })
 keymap({ 'n' }, '<F4>', "zR", { desc = "Unfold all" })
 keymap({ 'n' }, '<F5>', "zo", { desc = "Unfold" })
-
-keymap('n', "<F7>", "%s/\r//g", { desc = "Remove carriage-enter" })
 
 -- Function to exit visual mode
 local function exit_visual_mode()
@@ -90,10 +75,6 @@ keymap("n", "<Up>", "<C-u>", opt)
 keymap("n", "<Down>", "<C-d>", opt)
 
 -- Vim
-keymap("n", "K", ":lua vim.lsp.buf.hover()<CR>", opt)
-keymap('n', '[', ":lua vim.diagnostic.goto_prev()<CR>", opt)
-keymap('n', ']', ":lua vim.diagnostic.goto_next()<CR>", opt)
-keymap('i', '<c-s>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opt)
 
 local mappings = {
 	normal = {
@@ -183,4 +164,84 @@ vim.api.nvim_create_autocmd('filetype', {
 	group = netrw_cmds,
 	desc = 'Keybindings for netrw',
 	callback = netrw_mapping
+})
+
+-- Search and replace
+function search_replace_with_confirmation(type)
+	local oldTerm = vim.fn.input('Enter search term: ')
+
+	local newTerm = vim.fn.input('Enter replacement term: ')
+
+	if type == "global" then
+		vim.cmd('vimgrep /' .. oldTerm .. '/ **/*')
+	elseif type == "local" then
+		local filename = vim.fn.expand('%')
+
+		vim.cmd('vimgrep /' .. oldTerm .. '/ ' .. filename)
+	end
+
+	vim.cmd('copen')
+
+	vim.cmd('cdo %s/' .. oldTerm .. '/' .. newTerm .. '/gc')
+
+	vim.cmd('cclose')
+end
+
+function search_word(type)
+	local word = vim.fn.input('Enter search term: ')
+	if type == "global" then
+		vim.cmd('vimgrep /' .. word .. '/ **/*')
+	elseif type == "local" then
+		local filename = vim.fn.expand('%')
+
+		vim.cmd('vimgrep /' .. word .. '/ ' .. filename)
+	end
+
+	vim.cmd('copen')
+end
+
+function search_under_cursor(type)
+	local word = vim.fn.expand('<cword>')
+	if type == "global" then
+		vim.cmd('vimgrep /' .. word .. '/ **/*')
+	elseif type == "local" then
+		local filename = vim.fn.expand('%')
+
+		vim.cmd('vimgrep /' .. word .. '/ ' .. filename)
+	end
+
+	vim.cmd('copen')
+end
+
+keymap('n', '<leader>fR', ":lua search_replace_with_confirmation('global')<CR>", { desc = "Find and replace global" })
+keymap('n', '<leader>fr', ":lua search_replace_with_confirmation('local')<CR>", { desc = "Find and replace local" })
+keymap('n', '<leader>fW', ":lua search_word('global')<CR>", { desc = "Find word global" })
+keymap('n', '<leader>fw', ":lua search_word('local')<CR>", { desc = "Find word local" })
+keymap('n', '<leader>fo', ":lua search_under_cursor('local')<CR>", { desc = "Find word under cursor local" })
+keymap('n', '<leader>fO', ":lua search_under_cursor('global')<CR>", { desc = "Find word under cursor global" })
+
+
+
+vim.api.nvim_create_autocmd('LspAttach', {
+	group = vim.api.nvim_create_augroup('lsp', { clear = true }),
+	callback = function()
+		keymap("n", "K", ":lua vim.lsp.buf.hover()<CR>", opt)
+		keymap('n', '[', ":lua vim.diagnostic.goto_prev()<CR>", opt)
+		keymap('n', ']', ":lua vim.diagnostic.goto_next()<CR>", opt)
+		keymap('i', '<c-s>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opt)
+		map = function(key, action, desc)
+			vim.keymap.set('n', '<leader>' .. key, action, { desc = "LSP: " .. desc })
+		end
+		map('lf', vim.lsp.buf.format, "Format")
+		map('lc', vim.lsp.buf.code_action, "Code Action")
+		map('ls', vim.lsp.buf.signature_help, "Signature Help")
+		map('ld', vim.lsp.buf.definition, "Goto Definition")
+		map('li', vim.lsp.buf.implementation, "Code Implementation")
+		map('lw', vim.lsp.buf.references, "Code References")
+		map('ll', vim.lsp.codelens.run, "Codelens Run")
+		map('lL', vim.lsp.codelens.refresh, "Codelens Refresh")
+		map('lr', vim.lsp.buf.rename, "Rename")
+		map('lr', vim.lsp.buf.rename, "Rename")
+		map('lt', ":Telescope diagnostics<CR>", "Rename")
+	end
 })
