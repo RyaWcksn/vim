@@ -201,16 +201,26 @@ function search_word(type)
 end
 
 function search_under_cursor(type)
-	local word = vim.fn.expand('<cword>')
-	if type == "global" then
-		vim.cmd('vimgrep /' .. word .. '/ **/*')
-	elseif type == "local" then
-		local filename = vim.fn.expand('%')
+	local success, result = xpcall(function()
+		local word = vim.fn.expand('<cword>')
+		if type == "global" then
+			vim.cmd('vimgrep /' .. word .. '/ **/*')
+		elseif type == "local" then
+			local filename = vim.fn.expand('%')
+			vim.cmd('vimgrep /' .. word .. '/ ' .. filename)
+		end
+		vim.cmd('copen')
+	end, function(err)
+		-- This function will be called if an error occurs
+		if not string.find(err, "interrupted!") then
+			print("An error occurred during the search.")
+		end
+	end)
 
-		vim.cmd('vimgrep /' .. word .. '/ ' .. filename)
+	-- Handle errors caught by xpcall
+	if not success and not string.find(result, "interrupted!") then
+		print("An error occurred during the search.")
 	end
-
-	vim.cmd('copen')
 end
 
 keymap('n', '<leader>fR', ":lua search_replace_with_confirmation('global')<CR>", { desc = "Find and replace global" })
@@ -228,7 +238,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
 		keymap("n", "K", ":lua vim.lsp.buf.hover()<CR>", opt)
 		keymap('n', '[', ":lua vim.diagnostic.goto_prev()<CR>", opt)
 		keymap('n', ']', ":lua vim.diagnostic.goto_next()<CR>", opt)
-		keymap('i', '<c-s>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opt)
 		map = function(key, action, desc)
 			vim.keymap.set('n', '<leader>' .. key, action, { desc = "LSP: " .. desc })
 		end
@@ -242,6 +251,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
 		map('lL', vim.lsp.codelens.refresh, "Codelens Refresh")
 		map('lr', vim.lsp.buf.rename, "Rename")
 		map('lr', vim.lsp.buf.rename, "Rename")
-		map('lt', ":Telescope diagnostics<CR>", "Rename")
+		map('lt', ":Telescope diagnostics<CR>", "Diagnostics")
 	end
 })
