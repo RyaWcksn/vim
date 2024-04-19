@@ -8,11 +8,12 @@ capabilities.textDocument.completion.completionItem.resolveSupport = {
 
 vim.lsp.set_log_level("debug")
 
-local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
+local signs = { Error = "E ", Warn = " ", Hint = "H ", Info = "I " }
 for type, icon in pairs(signs) do
 	local hl = "DiagnosticSign" .. type
 	vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
 end
+
 
 local config = {
 	virtual_text = {
@@ -80,11 +81,30 @@ local on_attach = function(client, bufnr)
 			vim.diagnostic.open_float(nil, opts)
 		end
 	})
-	if client.server_capabilities.codeLensProvider then
-		vim.api.nvim_create_autocmd("BufEnter", {
+	if client.server_capabilities.publishDiagnosticsProvider then
+	end
+
+
+	if client.server_capabilities.inlayHintProvider then
+		vim.api.nvim_create_autocmd({ "InsertEnter" }, {
 			buffer = bufnr,
 			callback = function()
-				vim.lsp.codelens.refresh()
+				vim.lsp.inlay_hint.enable(bufnr, true)
+			end
+		})
+		vim.api.nvim_create_autocmd({ "InsertLeave" }, {
+			buffer = bufnr,
+			callback = function()
+				vim.lsp.inlay_hint.enable(bufnr, false)
+			end
+		})
+	end
+
+	if client.server_capabilities.codeLensProvider then
+		vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
+			buffer = bufnr,
+			callback = function()
+				vim.lsp.codelens.refresh({ bufnr = 0 })
 			end
 		})
 	end
@@ -125,6 +145,7 @@ local on_attach = function(client, bufnr)
 			end
 		end
 	end
+
 
 	if client.server_capabilities.documentHighlightProvider then
 		vim.api.nvim_set_hl(bufnr, 'LspReferenceRead', { link = 'Search' })

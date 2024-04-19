@@ -22,9 +22,6 @@ local function filename()
 	return fname .. " "
 end
 
-local function filetype()
-	return string.format(" %s ", vim.bo.filetype):upper()
-end
 
 local function lsp()
 	local count = {}

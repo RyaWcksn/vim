@@ -1,4 +1,6 @@
 local function winbar_exec()
+	---format buffer list
+	---@return string
 	local function format_buffer_list()
 		local filenames = {}
 		for _, buf in ipairs(vim.api.nvim_list_bufs()) do

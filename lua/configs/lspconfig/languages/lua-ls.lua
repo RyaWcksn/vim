@@ -4,10 +4,8 @@ M.lua_ls = function(capabilities, on_attach)
 	local lsp = require('lspconfig')
 	local default_workspace = {
 		library = {
-			"${3rd}/busted/library",
-			"${3rd}/luassert/library",
-			"${3rd}/luv/library",
-			vim.api.nvim_get_runtime_file("", true),
+			[vim.fn.expand("$VIMRUNTIME/lua")] = true,
+			[vim.fn.expand("config" .. "/lua")] = true,
 		},
 
 		checkThirdParty = false,
@@ -25,14 +23,8 @@ M.lua_ls = function(capabilities, on_attach)
 			Lua = {
 				hint = { enable = true },
 				elemetry = { enable = false },
-				runtime = {
-					version = "LuaJIT",
-					special = {
-						reload = "require",
-					},
-				},
 				diagnostics = {
-					globals = { "vim", "lvim", "reload" },
+					globals = { "vim" },
 				},
 				workspace = default_workspace,
 			}
@@ -42,4 +34,3 @@ M.lua_ls = function(capabilities, on_attach)
 end
 
 return M
-
