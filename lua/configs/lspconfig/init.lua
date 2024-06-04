@@ -81,30 +81,48 @@ local on_attach = function(client, bufnr)
 			vim.diagnostic.open_float(nil, opts)
 		end
 	})
-	if client.server_capabilities.publishDiagnosticsProvider then
-	end
-
 
 	if client.server_capabilities.inlayHintProvider then
 		vim.api.nvim_create_autocmd({ "InsertEnter" }, {
 			buffer = bufnr,
 			callback = function()
-				vim.lsp.inlay_hint.enable(bufnr, true)
+				vim.lsp.inlay_hint.enable(true)
 			end
 		})
 		vim.api.nvim_create_autocmd({ "InsertLeave" }, {
 			buffer = bufnr,
 			callback = function()
-				vim.lsp.inlay_hint.enable(bufnr, false)
+				vim.lsp.inlay_hint.enable(false)
 			end
 		})
 	end
 
 	if client.server_capabilities.codeLensProvider then
+		-- vim.lsp.codelens.on_codelens = function(err, results, ctx, _)
+		-- 	local clients = vim.lsp.get_clients()
+		-- 	for _, client_id in ipairs(clients) do
+		-- 		print(client_id.id)
+		-- 	end
+		-- 	if err then
+		-- 		vim.notify("CodeLens error: " .. err.message, vim.log.levels.ERROR)
+		-- 		return
+		-- 	end
+
+		-- 	if not results or vim.tbl_isempty(results) then
+		-- 		vim.notify("No CodeLens results", vim.log.levels.INFO)
+		-- 		return
+		-- 	end
+
+		-- 	-- Iterate over each CodeLens item in the result
+		-- 	for _, client_id in ipairs(clients) do
+		-- 		vim.lsp.codelens.display(results, bufnr, client_id.id)
+		-- 		vim.lsp.codelens.display
+		-- 	end
+		-- end
 		vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
 			buffer = bufnr,
 			callback = function()
-				vim.lsp.codelens.refresh({ bufnr = 0 })
+				vim.lsp.codelens.refresh()
 			end
 		})
 	end
@@ -124,6 +142,60 @@ local on_attach = function(client, bufnr)
 			{}
 		)
 	end
+	-- if client.server_capabilities.documentSymbolProvider then
+	-- 	local ns_id = vim.api.nvim_create_namespace("lsp_references_count")
+
+	-- 	local function show_references_count(bufnr, row, col)
+	-- 		local params = { textDocument = vim.lsp.util.make_text_document_params(), position = { line = row, character = col } }
+	-- 		vim.lsp.buf_request(bufnr, 'textDocument/references', params, function(err, result, ctx, config)
+	-- 			print(err)
+	-- 			print(result)
+	-- 			if err ~= nil or result == nil then
+	-- 				print("No references found")
+	-- 				return
+	-- 			end
+	-- 			local count = #result
+
+	-- 			vim.api.nvim_buf_clear_namespace(bufnr, ns_id, row, row + 1)
+
+	-- 			vim.api.nvim_buf_set_extmark(bufnr, ns_id, row, col, {
+	-- 				virt_text = { { "[" .. count .. " references]", "WarningMsg" } }, -- You can change the highlight group
+	-- 				virt_text_pos = 'eol'
+	-- 			})
+	-- 		end)
+	-- 	end
+
+	-- 	local function set_virtual_text_for_all(bufnr)
+	-- 		vim.lsp.buf_request(bufnr, 'textDocument/documentSymbol',
+	-- 			{ textDocument = vim.lsp.util.make_text_document_params() },
+	-- 			function(err, result, ctx, config)
+	-- 				if err then
+	-- 					vim.notify("Got error " .. err.message, vim.log.levels.ERROR)
+	-- 					return
+	-- 				end
+	-- 				if not result then
+	-- 					vim.notify("Got no result from buf request ", vim.log.levels.ERROR)
+	-- 					return
+	-- 				end
+	-- 				for _, symbol in ipairs(result) do
+	-- 					if symbol.kind == 6 or symbol.kind == 13 then -- Interface (6) or Variable (13)
+	-- 						local range = symbol.selectionRange
+	-- 						local row = range.start.line
+	-- 						local col = range.start.character
+	-- 						show_references_count(bufnr, row, col)
+	-- 					end
+	-- 				end
+	-- 			end)
+	-- 	end
+	-- 	set_virtual_text_for_all(bufnr)
+
+	-- 	vim.api.nvim_create_autocmd({ "BufWritePost", "TextChanged", "BufEnter" }, {
+	-- 		buffer = bufnr,
+	-- 		callback = function()
+	-- 			set_virtual_text_for_all(bufnr)
+	-- 		end,
+	-- 	})
+	-- end
 
 	if client.server_capabilities.definitionProvider then
 		vim.lsp.handlers["textDocument/definition"] = function(_, result, ctx)

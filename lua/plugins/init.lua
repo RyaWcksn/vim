@@ -15,6 +15,15 @@ vim.g.mapleader = " "
 
 require("lazy").setup({
 	{
+		'uloco/bluloco.nvim',
+		lazy = false,
+		priority = 1000,
+		dependencies = { 'rktjmp/lush.nvim' },
+		config = function()
+			require('configs.bluloco')
+		end,
+	},
+	{
 		"mfussenegger/nvim-jdtls",
 		ft = "java"
 	},
