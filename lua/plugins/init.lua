@@ -129,15 +129,17 @@ require("lazy").setup({
 			"friendly-snippets",
 		},
 	},
-	-- {
-	-- 	"rcarriga/nvim-dap-ui",
-	-- 	dependencies = {
-	-- 		'mfussenegger/nvim-dap'
-	-- 	},
-	-- 	config = function()
-	-- 		require("configs.dap")
-	-- 	end
-	-- },
+	{
+		"rcarriga/nvim-dap-ui",
+		dependencies = {
+			'mfussenegger/nvim-dap',
+			"nvim-neotest/nvim-nio",
+			"leoluz/nvim-dap-go"
+		},
+		config = function()
+			require("configs.dap")
+		end
+	},
 	{
 		'leoluz/nvim-dap-go',
 		ft = "go"
