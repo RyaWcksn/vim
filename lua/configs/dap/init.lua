@@ -42,7 +42,20 @@ dap.configurations.go = {
 		request = "launch",
 		mode = "test",
 		program = "./${relativeFileDirname}"
-	}
+	},
+	{
+		type = "delve",
+		name = "Debug (Remote binary)",
+		request = "launch",
+		mode = "exec",
+		hostName = "127.0.0.1",
+		port = "38697",
+		program = function()
+			local argument_string = vim.fn.input "Path to binary: "
+			vim.notify("Debugging binary: " .. argument_string)
+			return vim.fn.split(argument_string, " ", true)[1]
+		end,
+	},
 }
 
 
