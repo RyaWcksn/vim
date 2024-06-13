@@ -225,8 +225,8 @@ end
 
 keymap('n', '<leader>fR', ":lua search_replace_with_confirmation('global')<CR>", { desc = "Find and replace global" })
 keymap('n', '<leader>fr', ":lua search_replace_with_confirmation('local')<CR>", { desc = "Find and replace local" })
-keymap('n', '<leader>fW', ":lua search_word('global')<CR>", { desc = "Find word global" })
-keymap('n', '<leader>fw', ":lua search_word('local')<CR>", { desc = "Find word local" })
+keymap('n', '<leader>fw', ":Telescope live_grep<CR>", { desc = "Find word global" })
+-- keymap('n', '<leader>fw', ":lua search_word('local')<CR>", { desc = "Find word local" })
 keymap('n', '<leader>fo', ":lua search_under_cursor('local')<CR>", { desc = "Find word under cursor local" })
 keymap('n', '<leader>fO', ":lua search_under_cursor('global')<CR>", { desc = "Find word under cursor global" })
 
