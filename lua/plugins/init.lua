@@ -70,22 +70,22 @@ require("lazy").setup({
 		cmd = "WhichKey",
 		event = "VeryLazy",
 	},
-	{
-		'nvim-treesitter/nvim-treesitter',
-		config = function()
-			require('configs.treesitter')
-		end,
-		cmd = {
-			"TSInstall",
-			"TSUninstall",
-			"TSUpdate",
-			"TSUpdateSync",
-			"TSInstallInfo",
-			"TSInstallSync",
-			"TSInstallFromGrammar",
-		},
-		event = "User FileOpened",
-	},
+	-- {
+	-- 	'nvim-treesitter/nvim-treesitter',
+	-- 	config = function()
+	-- 		require('configs.treesitter')
+	-- 	end,
+	-- 	cmd = {
+	-- 		"TSInstall",
+	-- 		"TSUninstall",
+	-- 		"TSUpdate",
+	-- 		"TSUpdateSync",
+	-- 		"TSInstallInfo",
+	-- 		"TSInstallSync",
+	-- 		"TSInstallFromGrammar",
+	-- 	},
+	-- 	event = "User FileOpened",
+	-- },
 	{ 'nvim-treesitter/playground' },
 	{
 		'nvim-tree/nvim-tree.lua',

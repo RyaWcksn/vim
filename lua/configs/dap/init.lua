@@ -4,17 +4,6 @@ require('dap').set_log_level('TRACE') -- Helps when configuring DAP, see logs wi
 require('dap-go').setup()
 dapui.setup()
 
--- dap.adapters.delve = {
--- 	type = 'server',
--- 	port = '${port}',
--- 	executable = {
--- 		command = 'dlv',
--- 		args = { 'dap', '-l', '127.0.0.1:${port}', '--log', '--log-output="dap"', '--only-same-user=false' },
--- 	},
--- 	options = {
--- 		initialize_timeout_sec = 20,
--- 	},
--- }
 dap.adapters.delve = {
 	type = "server",
 	host = "127.0.0.1",
@@ -43,17 +32,38 @@ dap.configurations.go = {
 		mode = "test",
 		program = "./${relativeFileDirname}"
 	},
+	-- {
+	-- 	type = "delve",
+	-- 	name = "Debug (Remote binary)",
+	-- 	request = "launch",
+	-- 	mode = "exec",
+	-- 	hostName = "127.0.0.1",
+	-- 	port = "38697",
+	-- 	program = function()
+	-- 		local argument_string = vim.fn.input "Path to binary: "
+	-- 		vim.notify("Debugging binary: " .. argument_string)
+	-- 		return vim.fn.split(argument_string, " ", true)[1]
+	-- 	end,
+	-- },
 	{
 		type = "delve",
-		name = "Debug (Remote binary)",
+		name = "Debug (Build binary)",
 		request = "launch",
 		mode = "exec",
 		hostName = "127.0.0.1",
 		port = "38697",
 		program = function()
-			local argument_string = vim.fn.input "Path to binary: "
-			vim.notify("Debugging binary: " .. argument_string)
-			return vim.fn.split(argument_string, " ", true)[1]
+			local main_go_path = vim.fn.input("Path to main.go: ")
+			local debug_name = "debug_dap"
+			local cmd = string.format(
+				'GOOS=linux GOARCH=amd64 go build -o %s -gcflags=all="-N -l" %s',
+				debug_name,
+				main_go_path
+			)
+			os.execute(cmd)
+			vim.notify("Debugging binary: " .. debug_name)
+
+			return debug_name
 		end,
 	},
 }

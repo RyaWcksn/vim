@@ -271,7 +271,8 @@ local servers = {
 	yamlls = require('configs.lspconfig.languages.yamlls').yamlls(capabilities, on_attach),
 	prismals = require('configs.lspconfig.languages.prismals').prismals(capabilities, on_attach),
 	-- jdtls = require('configs.lspconfig.languages.jdtls').jdtls(capabilities, on_attach)
-	svelte = require('configs.lspconfig.languages.svelte').svelte(capabilities, on_attach)
+	svelte = require('configs.lspconfig.languages.svelte').svelte(capabilities, on_attach),
+	clangd = require('configs.lspconfig.languages.clangd').clangd(capabilities, on_attach)
 }
 
 require('configs.lspconfig.languages.rust-analyzer').rust_tools(capabilities, on_attach)
