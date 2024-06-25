@@ -87,10 +87,4 @@ g.gitblame_enabled = 0
 g.gitblame_message_template = "<summary> • <date> • <author>"
 g.gitblame_highlight_group = "LineNr"
 
-g.netrw_winsize = 20
-g.netrw_banner = 0
-g.netrw_keepdir = 0
-g.netrw_liststyle = 3
-
-
 vim.g.gist_open_browser_after_post = 1

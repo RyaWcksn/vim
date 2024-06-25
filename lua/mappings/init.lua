@@ -118,53 +118,6 @@ end
 
 
 
-local function netrw_mapping()
-	function create_file()
-		-- Get the current netrw directory
-		local netrw_curdir = vim.fn.expand('%:p:h')
-
-		-- Prompt the user for the filename
-		local filename = vim.fn.input('Enter filename: ')
-
-		-- Combine the directory path and the filename
-		local file_path = netrw_curdir .. "/" .. filename
-		if vim.fn.filereadable(file_path) == 0 then
-			-- Create an empty file
-			vim.fn.writefile({}, file_path)
-			print("File created: " .. file_path)
-		else
-			print("File already exists: " .. file_path)
-		end
-
-		vim.cmd("edit " .. file_path)
-	end
-
-	local bufmap = function(lhs, rhs)
-		local opts = { buffer = true, remap = true }
-		vim.keymap.set('n', lhs, rhs, opts)
-	end
-
-	-- Better navigation
-	bufmap('H', 'u')
-	bufmap('h', '-^')
-	bufmap('l', '<CR>')
-	bufmap('L', '<CR>:Lexplore<CR>')
-	bufmap('a', ':q<CR><CMD>lua create_file()<CR>')
-	bufmap('fr', 'r')
-	bufmap('q', ':q<CR>')
-	bufmap('?', ':WhichKey<CR>')
-
-	-- Toggle dotfiles
-	bufmap('.', 'gh')
-end
-
-local netrw_cmds = vim.api.nvim_create_augroup('netrw_cmds', { clear = true })
-vim.api.nvim_create_autocmd('filetype', {
-	pattern = 'netrw',
-	group = netrw_cmds,
-	desc = 'Keybindings for netrw',
-	callback = netrw_mapping
-})
 
 -- Search and replace
 function search_replace_with_confirmation(type)
